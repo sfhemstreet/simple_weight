@@ -13,21 +13,42 @@ class StatsTab extends StatelessWidget {
     final _weights = Provider.of<List<WeightData>>(context);
     final _calories = Provider.of<List<CalorieData>>(context);
 
+    List<Widget> _children = [];
+
     if(_calories == null || _weights == null){
-      return Padding( 
-        padding: EdgeInsets.all(8),
-        child: Center(
-          child: SizedBox( 
-            height: 400,
-            child: CupertinoActivityIndicator(),
+      _children.add(
+        Padding( 
+          padding: EdgeInsets.all(8),
+          child: Center(
+            child: SizedBox( 
+              height: 400,
+              child: CupertinoActivityIndicator(),
+            ),
           ),
-        ),
+        )
       );
     }
-
-    return Padding( 
-      padding: EdgeInsets.all(8),
-      child: StatsGraph(_weights, _calories),
+    else{
+      _children.add(
+        Padding( 
+          padding: EdgeInsets.all(8),
+          child: StatsGraph(_weights, _calories),
+        )
+      );
+    }
+    
+    return CustomScrollView(
+      slivers: <Widget>[
+        CupertinoSliverNavigationBar(
+          largeTitle: Text('Calories'),
+        ),
+        SliverPadding( 
+          padding: EdgeInsets.all(10),
+          sliver: SliverList( 
+            delegate: SliverChildListDelegate(_children),
+          ),
+        ),
+      ],
     );
   }
 }

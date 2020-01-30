@@ -101,7 +101,7 @@ class _CaloriesTabState extends State<CaloriesTab>{
                 Padding( 
                   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 100),
                   child:  CupertinoButton.filled(
-                    child: Text('Submit Weight') ,
+                    child: Text('Add to Daily Total') ,
                     onPressed: () => _onSubmitCalories(),
                     padding: EdgeInsets.all(10.0),
                 ),

@@ -29,6 +29,49 @@ class StatsTab extends StatelessWidget {
       );
     }
     else{
+      final WeightData lastWeight = _weights[_weights.length - 1];
+      final WeightData firstWeight = _weights[0];
+      final num overallWeightLoss = lastWeight.weight - firstWeight.weight;
+
+      _children.add(
+        Container( 
+          padding: EdgeInsets.only(bottom: 10),
+          decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: CupertinoColors.opaqueSeparator)),
+            //color: CupertinoColors.secondarySystemBackground
+          ),
+          child:Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: <Widget>[
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text("First Weigh In"),
+                  Text("Most Recent"),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(firstWeight.time),
+                  Text(lastWeight.time),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(firstWeight.weight.toStringAsFixed(1)),
+                  Text(lastWeight.weight.toStringAsFixed(1)),
+                ],
+              ),
+              Center( 
+                child: Text("Total Lost: " + overallWeightLoss.toStringAsFixed(1))
+              )
+            ],
+          )
+        )
+      );
+
       _children.add(
         Padding( 
           padding: EdgeInsets.all(8),

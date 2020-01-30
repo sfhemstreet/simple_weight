@@ -1,9 +1,12 @@
 import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter/rendering.dart';
 import 'package:simple_weight/models/weight_model.dart';
+import 'package:simple_weight/icons/scale_icon.dart';
+import 'package:simple_weight/widgets/weight_list.dart';
 
 /// Tab for viewing weight history and inputting weight
 class WeightsTab extends StatefulWidget{
+  WeightsTab({Key key}):super(key: key); 
   @override 
   _WeightsTabState createState() => _WeightsTabState();
 }
@@ -13,8 +16,8 @@ class _WeightsTabState extends State<WeightsTab> {
   static const int MIN_WEIGHT = 99;
   num _weight = 0;
   
-  TextEditingController _weightController = new TextEditingController();
-  WeightModel _weightModel = new WeightModel();
+  final TextEditingController _weightController = new TextEditingController();
+  final WeightModel _weightModel = new WeightModel();
 
   void _onChangeWeight(String text){
     // Input will always be text, parse to num if possible
@@ -32,7 +35,7 @@ class _WeightsTabState extends State<WeightsTab> {
     }
   }
 
-  void _onSubmitWeight(BuildContext context){
+  void _onSubmitWeight(){
     if(_weight > MIN_WEIGHT){
       // Make sure _weight has only one decimal space (ie 165.3) 
       final num newWeight = num.parse(_weight.toStringAsFixed(1));
@@ -49,13 +52,41 @@ class _WeightsTabState extends State<WeightsTab> {
 
   @override
   Widget build(BuildContext context) {
-  
+
     return CustomScrollView(
-      slivers: const <Widget>[
+      slivers: <Widget>[
         CupertinoSliverNavigationBar(
           largeTitle: Text('Weight'),
         ),
-      ],
-    ); 
+        SliverPadding( 
+          padding: EdgeInsets.symmetric(vertical: 20, horizontal: 100),
+          sliver: SliverList( 
+            delegate: SliverChildListDelegate(
+              [
+                Padding(
+                  padding: EdgeInsets.only(bottom: 10),
+                  child: CupertinoTextField(
+                    placeholder: "Enter Weight for Today",
+                    autocorrect: false,
+                    keyboardType: TextInputType.numberWithOptions(decimal: true),
+                    textInputAction: TextInputAction.done,
+                    controller: _weightController,
+                    onChanged: (text) => _onChangeWeight(text), 
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                CupertinoButton.filled(
+                  child: Text('Submit Weight') ,
+                  onPressed: () => _onSubmitWeight(),
+                  padding: EdgeInsets.all(10.0),
+                ),
+              ], 
+            ),
+          ),
+        ),
+        WeightList(),
+      ]
+    );
   }
 }
+

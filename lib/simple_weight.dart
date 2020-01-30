@@ -14,15 +14,15 @@ class SimpleWeight extends StatelessWidget{
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(StatsIcon.loss),
-            title: Text('Stats'),
+            //title: Text('Stats'),
           ),
           BottomNavigationBarItem(
             icon: Icon(SilverwareIcon.cutlery),
-            title: Text('Calories'),
+            //title: Text('Calories'),
           ),
           BottomNavigationBarItem(
             icon: Icon(ScaleIcon.weight),
-            title: Text('Weight'),
+            //title: Text('Weight'),
           ),
         ],
       ),
@@ -44,6 +44,12 @@ class SimpleWeight extends StatelessWidget{
             return CupertinoTabView(builder: (context) {
               return CupertinoPageScaffold(
                 child: WeightsTab(),
+              );
+            });
+          default:
+            return CupertinoTabView(builder: (context) {
+              return CupertinoPageScaffold(
+                child: StatsTab(),
               );
             });
         }

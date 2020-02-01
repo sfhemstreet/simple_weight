@@ -6,6 +6,7 @@ class WeightModel {
   static DBProvider database = DBProvider.db;
   static final _streamController = StreamController<List<WeightData>>.broadcast();
   
+  
   WeightModel() {
     _getWeights();
   }
@@ -24,10 +25,23 @@ class WeightModel {
     } 
   }
 
-  void addWeight(num weight) async {
+  void addTodaysWeight(num weight) async {
     final newWeight = new WeightData(weight: weight);
     try{
       await database.insertWeight(newWeight);  
+    }
+    catch(err){
+      print('Error adding todays new weight');
+      print(err);
+    }
+    finally{
+      _getWeights();
+    }
+  }
+
+  void insertWeight(WeightData weightData) async {
+    try{
+      await database.insertWeight(weightData);
     }
     catch(err){
       print('Error inserting new weight');
@@ -37,9 +51,6 @@ class WeightModel {
       _getWeights();
     }
   }
-
-  // TODO
-  // void updateWeight()
 
   void deleteAllWeights() async {
     try{
@@ -56,4 +67,6 @@ class WeightModel {
   void dispose(){
     _streamController.close();
   }
+
+  
 }

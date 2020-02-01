@@ -43,7 +43,7 @@ class _CaloriesTabState extends State<CaloriesTab>{
         _leftCalories -= _newCalories;
       });
       // addes to the db and triggers stream to refire
-      _calorieModel.addCalorie(_totalCalories);
+      _calorieModel.addTodaysCalorie(_totalCalories);
     }
   }
 

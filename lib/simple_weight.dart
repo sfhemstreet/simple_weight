@@ -9,6 +9,9 @@ import 'package:simple_weight/tabs/stats_tab.dart';
 class SimpleWeight extends StatelessWidget{
   @override  
   Widget build(BuildContext context){
+    
+    
+
     return CupertinoTabScaffold(
       tabBar: CupertinoTabBar(
         items: const <BottomNavigationBarItem>[

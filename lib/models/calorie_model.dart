@@ -24,10 +24,23 @@ class CalorieModel {
     } 
   }
 
-  void addCalorie(num calories) async {
+  void addTodaysCalorie(num calories) async {
     final newCalories = new CalorieData(calories: calories);
     try{
       await database.insertCalories(newCalories);  
+    }
+    catch(err){
+      print('Error adding todays new calories');
+      print(err);
+    }
+    finally{
+      _getCalories();
+    }
+  }
+
+   void insertCalories(CalorieData calorieData) async {
+    try{
+      await database.insertCalories(calorieData);
     }
     catch(err){
       print('Error inserting new calories');
@@ -37,9 +50,6 @@ class CalorieModel {
       _getCalories();
     }
   }
-
-  // TODO
-  // void updateCalores()
 
   void deleteAllCalories() async {
     try{

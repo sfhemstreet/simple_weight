@@ -102,7 +102,10 @@ class _EditWeightHistoryState extends State<EditWeightHistory> {
               // Temp vars for displaying weight data 
               String tempDate = TimeConvert().getFormattedString();
               num tempWeight = weightMap[tempDate];
-  
+
+              // check to change timePicker to dark mode look
+              Brightness brightness = MediaQuery.platformBrightnessOf(context);
+
               return StatefulBuilder(
                 builder: (BuildContext context, StateSetter setState){
                   return Column(
@@ -112,6 +115,7 @@ class _EditWeightHistoryState extends State<EditWeightHistory> {
                       SizedBox(
                         height: 200,
                         child: CupertinoDatePicker(
+                          backgroundColor: brightness == Brightness.dark ? CupertinoColors.black : CupertinoColors.white,
                           mode: CupertinoDatePickerMode.date,
                           initialDateTime: DateTime.now(),
                           minimumDate: DateTime(2020,1,1),

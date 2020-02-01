@@ -30,8 +30,11 @@ class CalorieList extends StatelessWidget {
 
             return Container(
               decoration: BoxDecoration(
-                border: Border.fromBorderSide(BorderSide(color: CupertinoColors.opaqueSeparator)),
-                color: CupertinoColors.secondarySystemBackground
+                border: Border(
+                  top: BorderSide(
+                    color: CupertinoColors.inactiveGray
+                  ),
+                ),
               ),
               padding: EdgeInsets.symmetric(vertical: 10, horizontal: 50),
               child: Row(

@@ -81,6 +81,7 @@ class _StatsGraphState extends State<StatsGraph> {
       children: [
         SizedBox( 
           height: 340,
+         
           child: charts.TimeSeriesChart(
             _seriesLineData,
             defaultRenderer: charts.LineRendererConfig(includeArea: false, stacked: true, includePoints: true),

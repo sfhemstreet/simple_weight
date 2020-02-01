@@ -69,7 +69,7 @@ class _CaloriesTabState extends State<CaloriesTab>{
                           mainAxisAlignment: MainAxisAlignment.spaceAround,
                           children: <Widget>[
                             describedCalories(description: 'Total Calories: ', calories: _totalCalories),
-                            describedCalories(description: 'Calories Remaining: ', calories: _leftCalories)
+                            describedCalories(description: 'Remaining: ', calories: _leftCalories)
                           ],
                         )
                       ),
@@ -85,7 +85,7 @@ class _CaloriesTabState extends State<CaloriesTab>{
                               padding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 10.0),
                               child: Text(
                                 '$_newCalories', 
-                                style: TextStyle(fontSize: 30),
+                                //style: TextStyle(fontSize: 30),
                               )
                             ),
                             CupertinoButton(

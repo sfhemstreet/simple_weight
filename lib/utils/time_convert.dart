@@ -3,14 +3,38 @@ import 'package:intl/intl.dart';
 /// Use this to convert DateTime into String and String into DateTime so everything is the same everywhere.
 class TimeConvert {
 
-  /// Converts DateTime to the string format used in this app
-  String toFormattedString(DateTime time){
-    final String stringTime = new DateFormat.yMMMMd('en_US').format(time);
+  String getFormattedString(){
+    final String stringTime = DateFormat.yMMMMd('en_US').format(DateTime.now());
     return stringTime;
   }
 
-  /// Converts the string format used in this app to DateTime 
-  DateTime toDateTime(String time){
+  // Use this to store the day in the DB
+  int getHoursSinceEpoch(){
+    final daysSinceEpoch = DateTime.now().millisecondsSinceEpoch ~/ 1000 ~/ 60 ~/ 60;
+    return daysSinceEpoch;
+  }
+
+  // Use this to convert DB stored time into String
+  String hoursSinceEpochToString(int hoursSinceEpoch){
+    final dateTime = DateTime.fromMillisecondsSinceEpoch(hoursSinceEpoch * 1000 * 60 * 60);
+    final stringTime = dateTimeToFormattedString(dateTime);
+    return stringTime;
+  }
+
+  /// Converts DateTime to the string format used in this app
+  String dateTimeToFormattedString(DateTime time){
+    final String stringTime = DateFormat.yMMMMd('en_US').format(time);
+    return stringTime;
+  }
+
+  int stringToHoursSinceEpoch(String timeString){
+    final DateTime dateTime = stringToDateTime(timeString);
+    final int hoursSinceEpoch = dateTime.millisecondsSinceEpoch ~/ 1000 ~/ 60 ~/ 60;
+    return hoursSinceEpoch;
+  }
+
+  /// Converts the string format used in this app into DateTime 
+  DateTime stringToDateTime(String time){
     // Month is index 0 to the first blank space
     final String month = time.substring(0, time.indexOf(' '));
     // Day is index of first blank space + 1 to the index of the ','
@@ -24,31 +48,31 @@ class TimeConvert {
 
     switch(month){
       case 'January':
-        return new DateTime(year, 1, day);
+        return DateTime(year, 1, day);
       case 'February':
-        return new DateTime(year, 2, day);
+        return DateTime(year, 2, day);
       case 'March':
-        return new DateTime(year, 3, day);
+        return DateTime(year, 3, day);
       case 'April':
-        return new DateTime(year, 4, day);
+        return DateTime(year, 4, day);
       case 'May':
-        return new DateTime(year, 5, day);
+        return DateTime(year, 5, day);
       case 'June':
-        return new DateTime(year, 6, day);
+        return DateTime(year, 6, day);
       case 'July':
-        return new DateTime(year, 7, day);
+        return DateTime(year, 7, day);
       case 'August':
-        return new DateTime(year, 8, day);
+        return DateTime(year, 8, day);
       case 'September': 
-        return new DateTime(year, 9, day);
+        return DateTime(year, 9, day);
       case 'October': 
-        return new DateTime(year, 10, day);
+        return DateTime(year, 10, day);
       case 'November':
-        return new DateTime(year, 11, day); 
+        return DateTime(year, 11, day); 
       case 'December':
-        return new DateTime(year, 12, day);  
+        return DateTime(year, 12, day);  
       default: 
-        return new DateTime(year, 1, day); 
+        return DateTime(year, 1, day); 
     }
   }
 }

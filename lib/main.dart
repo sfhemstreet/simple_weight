@@ -12,6 +12,14 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget{
   @override 
   Widget build(BuildContext context){
+    
+    final platformBrightness = MediaQuery.platformBrightnessOf(context);
+    print(platformBrightness);
+
+    //final Brightness brightnessValue = MediaQuery.of(context).platformBrightness;
+    //bool isDark = brightnessValue == Brightness.dark; 
+    //print(isDark);
+
     return MultiProvider( 
       providers: [
         // Streams Weight data stored in DB
@@ -44,11 +52,9 @@ class MyApp extends StatelessWidget{
         child: CupertinoApp(
           title: 'Simple Weight',
           debugShowCheckedModeBanner: false,
-          /*
           theme: CupertinoThemeData(
-            primaryColor: CupertinoColors.activeBlue,
+
           ),
-          */
           home: SimpleWeight(),
         ),
       ),

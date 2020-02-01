@@ -11,7 +11,7 @@ class DBProvider {
   DBProvider._();
   static final DBProvider db = DBProvider._();
   static Database _database;
-  static const String DB_NAME = 'simple_weight.db';
+  static const String DB_NAME = 'simple_weight_db.db';
 
   Future<Database> get database async {
     if (_database != null){
@@ -36,15 +36,17 @@ class DBProvider {
       '''
       CREATE TABLE weights (
         time TEXT PRIMARY KEY,
-        weight int
+        weight REAL,
+        hours_since_epoch INTEGER
       )
       '''
     );
     batch.execute(
       '''
-        CREATE TABLE calories (
+      CREATE TABLE calories (
         time TEXT PRIMARY KEY,
-        calories INTEGER
+        calories INTEGER,
+        hours_since_epoch INTEGER
       );
       '''
     );
@@ -100,9 +102,9 @@ class DBProvider {
 
   Future<List<CalorieData>> getAllCalories() async {
     final db = await database;
-    var res = await db.query("calories");
+    var res = await db.query("calories", orderBy: "hours_since_epoch ASC");
     List<CalorieData> list =
-        res.isNotEmpty ? res.map((c) => CalorieData.fromMap(c)).toList() : [];
+      res.isNotEmpty ? res.map((c) => CalorieData.fromMap(c)).toList() : [];
     return list;
   }
 
@@ -169,7 +171,7 @@ class DBProvider {
 
   Future<List<WeightData>> getAllWeights() async {
     final db = await database;
-    var res = await db.query("weights");
+    var res = await db.query("weights", orderBy: "hours_since_epoch ASC");
     List<WeightData> list =
         res.isNotEmpty ? res.map((w) => WeightData.fromMap(w)).toList() : [];
     return list;
@@ -177,223 +179,50 @@ class DBProvider {
 
   /// This inserts sample information so the app has data already.
   Future<void> _insertSampleData(Database db) async {
-    Batch batchInsert = db.batch();
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO weights 
-      VALUES ('January 2, 2020', 146.4)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO weights 
-      VALUES ('January 3, 2020', 144.8)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO weights 
-      VALUES ('January 7, 2020', 144)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO weights 
-      VALUES ('January 8, 2020', 141.8)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO weights 
-      VALUES ('January 9, 2020', 140.2)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO weights 
-      VALUES ('January 10, 2020', 141.8)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO weights 
-      VALUES ('January 12, 2020', 144)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO weights 
-      VALUES ('January 13, 2020', 144.4)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO weights 
-      VALUES ('January 14, 2020', 140.8)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO weights 
-      VALUES ('January 15, 2020', 140.8)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO weights 
-      VALUES ('January 16, 2020', 140.6)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO weights 
-      VALUES ('January 17, 2020', 140.8)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO weights 
-      VALUES ('January 18, 2020', 142.2)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO weights 
-      VALUES ('January 23, 2020', 144.7)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO weights 
-      VALUES ('January 24, 2020', 143.8)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO weights 
-      VALUES ('January 25, 2020', 144.2)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO weights 
-      VALUES ('January 26, 2020', 143.9)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO weights 
-      VALUES ('January 27, 2020', 143.4)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO calories 
-      VALUES ('January 2, 2020', 1400)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO calories 
-      VALUES ('January 3, 2020', 1600)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO calories 
-      VALUES ('January 7, 2020', 1400)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO calories 
-      VALUES ('January 8, 2020', 1500)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO calories 
-      VALUES ('January 9, 2020', 1440)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO calories 
-      VALUES ('January 10, 2020', 1700)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO calories 
-      VALUES ('January 12, 2020', 1300)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO calories 
-      VALUES ('January 13, 2020', 1600)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO calories 
-      VALUES ('January 14, 2020', 1500)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO calories 
-      VALUES ('January 15, 2020', 1600)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO calories 
-      VALUES ('January 16, 2020', 1400)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO calories 
-      VALUES ('January 17, 2020', 1300)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO calories 
-      VALUES ('January 18, 2020', 1400)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO calories 
-      VALUES ('January 23, 2020', 1600)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO calories 
-      VALUES ('January 24, 2020', 1600)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO calories 
-      VALUES ('January 25, 2020', 1600)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO calories 
-      VALUES ('January 26, 2020', 1500)
-      '''
-    );
-    batchInsert.rawInsert(
-      '''
-      INSERT INTO calories 
-      VALUES ('January 27, 2020', 1500)
-      '''
-    );
-    await batchInsert.commit();
+
+    insertWeight(WeightData(time: "January 2, 2020", weight: 146.4));
+    insertWeight(WeightData(time: "January 3, 2020", weight: 144.8));
+    insertWeight(WeightData(time: "January 7, 2020", weight: 144));
+    insertWeight(WeightData(time: "January 8, 2020", weight: 141.8));
+    insertWeight(WeightData(time: "January 9, 2020", weight: 140.2));
+    insertWeight(WeightData(time: "January 10, 2020", weight: 141.8));
+    insertWeight(WeightData(time: "January 12, 2020", weight: 144));
+    insertWeight(WeightData(time: "January 13, 2020", weight: 144.4));
+    insertWeight(WeightData(time: "January 14, 2020", weight: 140.8));
+    insertWeight(WeightData(time: "January 15, 2020", weight: 140.8));
+    insertWeight(WeightData(time: "January 16, 2020", weight: 140.6));
+    insertWeight(WeightData(time: "January 17, 2020", weight: 140.8));
+    insertWeight(WeightData(time: "January 18, 2020", weight: 142.2));
+    insertWeight(WeightData(time: "January 23, 2020", weight: 144.7));
+    insertWeight(WeightData(time: "January 24, 2020", weight: 143.8));
+    insertWeight(WeightData(time: "January 25, 2020", weight: 142.8));
+    insertWeight(WeightData(time: "January 26, 2020", weight: 143.8));
+    insertWeight(WeightData(time: "January 27, 2020", weight: 143.8));
+    insertWeight(WeightData(time: "January 28, 2020", weight: 141.8));
+    insertWeight(WeightData(time: "January 29, 2020", weight: 140.2));
+    insertWeight(WeightData(time: "January 30, 2020", weight: 141.4));
+
+    insertCalories(CalorieData(time: "January 2, 2020", calories: 1600));
+    insertCalories(CalorieData(time: "January 3, 2020", calories: 1500));
+    insertCalories(CalorieData(time: "January 7, 2020", calories: 1400));
+    insertCalories(CalorieData(time: "January 8, 2020", calories: 1400));
+    insertCalories(CalorieData(time: "January 9, 2020", calories: 1500));
+    insertCalories(CalorieData(time: "January 10, 2020", calories: 1600));
+    insertCalories(CalorieData(time: "January 12, 2020", calories: 1700));
+    insertCalories(CalorieData(time: "January 13, 2020", calories: 1500));
+    insertCalories(CalorieData(time: "January 14, 2020", calories: 1500));
+    insertCalories(CalorieData(time: "January 15, 2020", calories: 1400));
+    insertCalories(CalorieData(time: "January 16, 2020", calories: 1600));
+    insertCalories(CalorieData(time: "January 17, 2020", calories: 1500));
+    insertCalories(CalorieData(time: "January 18, 2020", calories: 1600));
+    insertCalories(CalorieData(time: "January 23, 2020", calories: 1400));
+    insertCalories(CalorieData(time: "January 24, 2020", calories: 1500));
+    insertCalories(CalorieData(time: "January 25, 2020", calories: 1600));
+    insertCalories(CalorieData(time: "January 26, 2020", calories: 1500));
+    insertCalories(CalorieData(time: "January 27, 2020", calories: 1500));
+    insertCalories(CalorieData(time: "January 28, 2020", calories: 1600));
+    insertCalories(CalorieData(time: "January 29, 2020", calories: 1600));
+    insertCalories(CalorieData(time: "January 30, 2020", calories: 1400));
+
   }
 }

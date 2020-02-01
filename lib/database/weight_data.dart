@@ -4,16 +4,19 @@ import 'package:simple_weight/utils/time_convert.dart';
 class WeightData {
   String time;
   num weight;
+  int _hoursSinceEpoch;
 
   WeightData({num weight, String time}){
     this.weight = weight;
-    this.time = time == null ? new TimeConvert().toFormattedString(new DateTime.now()) : time;
+    this.time = time == null ? TimeConvert().getFormattedString() : time;
+    this._hoursSinceEpoch = time == null ? TimeConvert().getHoursSinceEpoch() : TimeConvert().stringToHoursSinceEpoch(time);
   }
 
   Map<String, dynamic> toMap() {
     return {
       'time': time,
       'weight': weight,
+      'hours_since_epoch': _hoursSinceEpoch
     };
   }
 

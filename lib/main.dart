@@ -12,19 +12,12 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget{
   @override 
   Widget build(BuildContext context){
-    
-    final platformBrightness = MediaQuery.platformBrightnessOf(context);
-    print(platformBrightness);
-
-    //final Brightness brightnessValue = MediaQuery.of(context).platformBrightness;
-    //bool isDark = brightnessValue == Brightness.dark; 
-    //print(isDark);
-
     return MultiProvider( 
       providers: [
         // Streams Weight data stored in DB
         StreamProvider<List<WeightData>>( 
           create:(_) => WeightModel().weightStream,
+          initialData: List<WeightData>(),
           catchError: (context, obj){
             debugPrint('Stream Provider error - weight');
             debugPrint(obj);
@@ -34,6 +27,7 @@ class MyApp extends StatelessWidget{
         // Streams Calorie Data stored in DB
         StreamProvider<List<CalorieData>>( 
           create:(_) => CalorieModel().calorieStream,
+          initialData: List<CalorieData>(),
           catchError: (context, obj){
             debugPrint('Stream Provider error - calories');
             debugPrint(obj);
@@ -52,10 +46,49 @@ class MyApp extends StatelessWidget{
         child: CupertinoApp(
           title: 'Simple Weight',
           debugShowCheckedModeBanner: false,
-          theme: CupertinoThemeData(
-
-          ),
           home: SimpleWeight(),
+          
+          builder: (BuildContext context, Widget child){
+            Brightness brightness = MediaQuery.platformBrightnessOf(context);
+
+            Color textColor = brightness == Brightness.dark ?
+              CupertinoColors.white : CupertinoColors.black;
+
+            Color primaryColor = brightness == Brightness.dark ? 
+              CupertinoColors.activeBlue : CupertinoColors.activeBlue;
+
+            Color primaryContrastingColor = brightness == Brightness.dark ? 
+              CupertinoColors.white : CupertinoColors.black;
+
+
+            return CupertinoTheme(
+              data: CupertinoThemeData(
+                brightness: brightness,
+                primaryColor: primaryColor,
+                primaryContrastingColor: primaryContrastingColor,
+                textTheme: CupertinoTextThemeData(  
+                  primaryColor: primaryColor,
+                  textStyle: TextStyle(
+                    color: primaryContrastingColor,
+                  ),
+                  navActionTextStyle: TextStyle(
+                    color: primaryContrastingColor,
+                  ),
+                  actionTextStyle: TextStyle(
+                    color: primaryContrastingColor,
+                  ),
+                ),
+              ),
+              child: DefaultTextStyle.merge(
+                style: TextStyle(
+                  color: textColor,
+                  
+                ), 
+                child: child,
+              ),
+            );
+          }
+          
         ),
       ),
     );

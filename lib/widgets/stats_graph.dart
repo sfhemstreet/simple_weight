@@ -19,7 +19,7 @@ class _StatsGraphState extends State<StatsGraph> {
   DateTime _selectedTime;
   Map<String, num> _selectedMeasurements;
 
-  _onSelectionChanged(charts.SelectionModel model) {
+  void _onSelectionChanged(charts.SelectionModel model) {
     final selectedDatum = model.selectedDatum;
 
     DateTime time;
@@ -78,9 +78,11 @@ class _StatsGraphState extends State<StatsGraph> {
     );
     
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
         SizedBox( 
-          height: 340,
+          height: 340.0,
+          width: 250.0,
           child: charts.TimeSeriesChart(
             _seriesLineData,
             defaultRenderer: charts.LineRendererConfig(includeArea: false, stacked: true, includePoints: true),
@@ -129,12 +131,10 @@ class _StatsGraphState extends State<StatsGraph> {
 
 /// Displays data from tapped area of graph.
 class SelectedData extends StatelessWidget {
-  String time;
+  final DateTime time;
   final Map<String, num> measurements;
 
-  SelectedData({DateTime time, this.measurements}){
-    this.time = time != null ? TimeConvert().dateTimeToFormattedString(time) : null;
-  }
+  SelectedData({this.time, this.measurements});
 
   @override 
   Widget build(BuildContext context){
@@ -142,7 +142,7 @@ class SelectedData extends StatelessWidget {
     
     if (time != null) {
       children.add(
-        Text(time)
+        Text(TimeConvert().dateTimeToFormattedString(time))
       );
 
       measurements?.forEach((String series, num value) {

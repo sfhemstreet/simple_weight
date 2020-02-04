@@ -3,8 +3,19 @@ import 'package:intl/intl.dart';
 /// Use this to convert DateTime into String and String into DateTime so everything is the same everywhere.
 class TimeConvert {
 
+  bool isStringToday(String stringTime){
+    String today = getFormattedString();
+    if(today == stringTime){
+      return true;
+    }
+    else{
+      return false;
+    }
+  }
+
   String getFormattedString(){
-    final String stringTime = DateFormat.yMMMMd('en_US').format(DateTime.now());
+    final DateTime now = DateTime.now();
+    final String stringTime = dateTimeToFormattedString(now);
     return stringTime;
   }
 
@@ -23,7 +34,8 @@ class TimeConvert {
 
   /// Converts DateTime to the string format used in this app
   String dateTimeToFormattedString(DateTime time){
-    final String stringTime = DateFormat.yMMMMd('en_US').format(time);
+    // The keeper of truth, this DateFormat is king 
+    final String stringTime = DateFormat.yMMMd('en_US').format(time);
     return stringTime;
   }
 
@@ -31,6 +43,30 @@ class TimeConvert {
     final DateTime dateTime = stringToDateTime(timeString);
     final int hoursSinceEpoch = dateTime.millisecondsSinceEpoch ~/ 1000 ~/ 60 ~/ 60;
     return hoursSinceEpoch;
+  }
+
+  String getWeekdayFromFormattedString(String time){
+    DateTime dateTime = stringToDateTime(time);
+    int dayOfWeek = dateTime.weekday;
+
+    switch(dayOfWeek){
+      case 1:
+        return "Monday";
+      case 2: 
+        return "Tuesday";
+      case 3:
+        return "Wednesday";
+      case 4:
+        return "Thursday";
+      case 5: 
+        return "Friday";
+      case 6:
+        return "Saturday";
+      case 7: 
+        return "Sunday";
+      default:
+        return "";
+    }
   }
 
   /// Converts the string format used in this app into DateTime 
@@ -42,34 +78,34 @@ class TimeConvert {
     // Year is index of ',' + 2 to the end of the string
     final year = int.tryParse(time.substring((time.indexOf(',') + 2))) ?? 2020;
 
-    //debugPrint(month);
-    //debugPrint(day.toString());
-    //debugPrint(year.toString());
+    // print(month);
+    // print(day.toString());
+    // print(year.toString());
 
     switch(month){
-      case 'January':
+      case 'Jan':
         return DateTime(year, 1, day);
-      case 'February':
+      case 'Feb':
         return DateTime(year, 2, day);
-      case 'March':
+      case 'Mar':
         return DateTime(year, 3, day);
-      case 'April':
+      case 'Apr':
         return DateTime(year, 4, day);
       case 'May':
         return DateTime(year, 5, day);
-      case 'June':
+      case 'Jun':
         return DateTime(year, 6, day);
-      case 'July':
+      case 'Jul':
         return DateTime(year, 7, day);
-      case 'August':
+      case 'Aug':
         return DateTime(year, 8, day);
-      case 'September': 
+      case 'Sep': 
         return DateTime(year, 9, day);
-      case 'October': 
+      case 'Oct': 
         return DateTime(year, 10, day);
-      case 'November':
+      case 'Nov':
         return DateTime(year, 11, day); 
-      case 'December':
+      case 'Dec':
         return DateTime(year, 12, day);  
       default: 
         return DateTime(year, 1, day); 

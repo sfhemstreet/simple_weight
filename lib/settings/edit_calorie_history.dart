@@ -1,46 +1,47 @@
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
-import 'package:simple_weight/database/weight_data.dart';
-import 'package:simple_weight/models/weight_model.dart';
+import 'package:simple_weight/database/calorie_data.dart';
+import 'package:simple_weight/models/calorie_model.dart';
+import 'package:simple_weight/styles/styles.dart';
 import 'package:simple_weight/utils/time_convert.dart';
-import 'package:simple_weight/icons/scale_icon.dart';
+import 'package:simple_weight/icons/silverware_icon.dart';
 
-class EditWeightHistory extends StatefulWidget{
+class EditCalorieHistory extends StatefulWidget{
   @override 
-  _EditWeightHistoryState createState() => _EditWeightHistoryState();
+  _EditCalorieHistoryState createState() => _EditCalorieHistoryState();
 }
 
-class _EditWeightHistoryState extends State<EditWeightHistory> {
+class _EditCalorieHistoryState extends State<EditCalorieHistory> {
   // Minimum weight input allowed 
-  static const int MIN_WEIGHT = 99;
+  static const int MIN_CALORIES = 100;
 
-  final WeightModel _weightModel = WeightModel();
+  final CalorieModel _calorieModel = CalorieModel();
 
-  WeightData _selectedDateData;
-  bool _hasPrevWeight = false;
-  num _weightInput;
+  CalorieData _selectedDateData;
+  bool _hasPrevCalories = false;
+  int _calorieInput;
 
-  void _onEditWeight(String text){
+  void _onEditCalories(String text){
     // Input will always be text, parse to num if possible
     num newWeight = num.tryParse(text) ?? 0;
 
-    if(newWeight > MIN_WEIGHT){
+    if(newWeight >= MIN_CALORIES){
       setState(() {
-        _weightInput = newWeight;
+        _calorieInput = newWeight;
       });
     }
   }
 
-  void _onSubmitWeight(BuildContext context) async {
-    if(_weightInput != null && _weightInput > MIN_WEIGHT){
+  void _onSubmitCalories(BuildContext context) async {
+    if(_calorieInput != null && _calorieInput >= MIN_CALORIES){
 
       // Display popup alert if new weight is overriding prevWeight.
-      if(_hasPrevWeight){
+      if(_hasPrevCalories){
         bool willOverride = await showCupertinoDialog<bool>(
           context: context,
           builder: (BuildContext context){
             return CupertinoAlertDialog(
-              title: Text("${_selectedDateData.time} has a previously recorded weight, ${_selectedDateData.weight}.\n"),
+              title: Text("${_selectedDateData.time} has previously recorded calories, ${_selectedDateData.calories}.\n"),
               content: Text("Are you sure you want to change this?"),
               actions: <Widget>[
                 CupertinoDialogAction(
@@ -62,14 +63,14 @@ class _EditWeightHistoryState extends State<EditWeightHistory> {
       }
 
       // Make sure weight has only one decimal space (ie 165.3) 
-      _selectedDateData.weight = num.parse(_weightInput.toStringAsFixed(1));
+      _selectedDateData.calories = _calorieInput;
       // Add weight to model so entire app knows the enw weight
-      _weightModel.insertWeight(_selectedDateData);
+      _calorieModel.insertCalories(_selectedDateData);
       
       // makes submit button go away
       setState(() {
         _selectedDateData = null;
-        _weightInput = null;
+        _calorieInput = null;
       });
     }
   }
@@ -77,11 +78,11 @@ class _EditWeightHistoryState extends State<EditWeightHistory> {
   @override 
   Widget build(BuildContext context){
 
-    final _weights = Provider.of<List<WeightData>>(context);
-    final Map<String, num> weightMap = new Map();
+    final _calories = Provider.of<List<CalorieData>>(context);
+    final Map<String, num> calorieMap = new Map<String, num>();
 
-    for(WeightData w in _weights){
-      weightMap[w.time] = w.weight;
+    for(CalorieData c in _calories){
+      calorieMap[c.time] = c.calories;
     }
 
     // List to be added to SliverChildListDelegate
@@ -90,19 +91,22 @@ class _EditWeightHistoryState extends State<EditWeightHistory> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Text("Missed a day? No problem!"),
-          Text("Add or edit weight for past dates here."),
+          Text("Add or edit calories for past dates here."),
         ],
       ),
       CupertinoButton( 
         child: Text("Select A Date"),
         onPressed: () async {
-          final WeightData dateData = await showCupertinoDialog<WeightData>(
+          final CalorieData dateData = await showCupertinoDialog<CalorieData>(
             context: context,
             builder: (BuildContext context){
               // Temp vars for displaying weight data 
               String tempDate = TimeConvert().getFormattedString();
-              num tempWeight = weightMap[tempDate];
-  
+              num tempCalories = calorieMap[tempDate];
+
+              // check to change timePicker to dark mode look
+              Brightness brightness = MediaQuery.platformBrightnessOf(context);
+
               return StatefulBuilder(
                 builder: (BuildContext context, StateSetter setState){
                   return Column(
@@ -112,6 +116,7 @@ class _EditWeightHistoryState extends State<EditWeightHistory> {
                       SizedBox(
                         height: 200,
                         child: CupertinoDatePicker(
+                          backgroundColor: brightness == Brightness.dark ? CupertinoColors.black : CupertinoColors.white,
                           mode: CupertinoDatePickerMode.date,
                           initialDateTime: DateTime.now(),
                           minimumDate: DateTime(2020,1,1),
@@ -119,20 +124,20 @@ class _EditWeightHistoryState extends State<EditWeightHistory> {
                           // SetsState on tempWeight to display the recorded weight at the tempDate. 
                           onDateTimeChanged: (DateTime date){
                             tempDate = TimeConvert().dateTimeToFormattedString(date);
-                            setState(() => tempWeight = weightMap[tempDate]);
+                            setState(() => tempCalories = calorieMap[tempDate]);
                           },
                         ),
                       ),
                       // Displays Action sheet showing if date selected already has weight 
                       // and options to cancel or select the date.
                       CupertinoActionSheet(
-                        title: Text(tempWeight == null ? 
-                          "No weight was recorded on this date" : "Recorded weight on this date was " + tempWeight.toString()
+                        title: Text(tempCalories == null ? 
+                          "No calories were recorded on this date" : "Recorded calorie intake on this date was " + tempCalories.toString()
                         ),
                         actions: <Widget>[
                           CupertinoActionSheetAction(
-                            onPressed: () => Navigator.of(context).pop(WeightData(time: tempDate, weight: tempWeight)),
-                            child: Text("Edit Weight on Selected Date"),
+                            onPressed: () => Navigator.of(context).pop(CalorieData(time: tempDate, calories: tempCalories)),
+                            child: Text("Edit Calories on Selected Date"),
                           )
                         ],
                         cancelButton: CupertinoActionSheetAction(
@@ -149,7 +154,7 @@ class _EditWeightHistoryState extends State<EditWeightHistory> {
           if(dateData != null){
             setState((){
               _selectedDateData = dateData;
-              _hasPrevWeight = dateData.weight == null ? false : true;
+              _hasPrevCalories = dateData.calories == null ? false : true;
             });  
           }
         },
@@ -168,9 +173,9 @@ class _EditWeightHistoryState extends State<EditWeightHistory> {
                 child: Text("Selected Date: " + _selectedDateData.time),
               ),
               Padding(
-                padding: EdgeInsets.all(0),
-                child: Text(_hasPrevWeight ? 
-                  "Recorded weight on this date was " + _selectedDateData.weight.toString() : ""
+                padding: EdgeInsets.only(bottom: _hasPrevCalories ? 10 : 0),
+                child: Text(_hasPrevCalories ? 
+                  "Previously recorded calories were " + _selectedDateData.calories.toString() : ""
                 ),
               ),
               Padding(  
@@ -178,20 +183,20 @@ class _EditWeightHistoryState extends State<EditWeightHistory> {
                 child: CupertinoTextField(
                   prefix: Padding( 
                     padding: EdgeInsets.all(4),
-                    child: Icon(ScaleIcon.weight, color: CupertinoColors.inactiveGray,),
+                    child: Icon(SilverwareIcon.cutlery, color: CupertinoColors.inactiveGray,),
                   ),
-                  placeholder: "Enter Weight",
+                  placeholder: "Enter Calories",
                   autocorrect: false,
-                  keyboardType: TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: TextInputType.numberWithOptions(decimal: false),
                   textInputAction: TextInputAction.done,
-                  onChanged: (text) => _onEditWeight(text), 
+                  onChanged: (text) => _onEditCalories(text), 
                   textAlign: TextAlign.center,
                 ), 
               ),
               CupertinoButton.filled(
-                child: Text('Submit Weight') ,
-                onPressed: () => _onSubmitWeight(context),
-                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 45),
+                child: Text('Submit Weight', style: Styles.buttonTextStyle) ,
+                onPressed: () => _onSubmitCalories(context),
+                padding: EdgeInsets.symmetric(vertical: 8, horizontal: 50),
                 minSize: 20,
               ),
             ],
@@ -203,7 +208,8 @@ class _EditWeightHistoryState extends State<EditWeightHistory> {
     return CustomScrollView(
       slivers: <Widget>[
         CupertinoSliverNavigationBar(
-          largeTitle: Text('Edit Weight History'),
+          largeTitle: Text('Edit Calorie History'),
+          heroTag: "Edit Calorie History",
         ),
         SliverPadding(
           padding: EdgeInsets.only(top: 15),
@@ -215,4 +221,3 @@ class _EditWeightHistoryState extends State<EditWeightHistory> {
     );
   }
 }
-

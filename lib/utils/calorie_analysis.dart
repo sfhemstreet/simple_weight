@@ -25,6 +25,8 @@ class CalorieAnalysis {
 
   /// Average caloric intake, avg weekend / weekday caloric intake, min/max caloric intake
   void _runAnalysis(){
+    String today = TimeConvert().getFormattedString(); 
+
     int totalSum = 0;
     int totalLength = calorieData.length;
 
@@ -55,7 +57,10 @@ class CalorieAnalysis {
       }
       // Calc min
       if(c.calories < min.calories){
-        min = c;
+        // Min calories could be today, which is incomplete data. 
+        if(c.time != today){
+          min = c;
+        }
       }
       // Calc max
       if(c.calories > max.calories){

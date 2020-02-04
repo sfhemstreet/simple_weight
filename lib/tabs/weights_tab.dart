@@ -2,7 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/rendering.dart';
 import 'package:simple_weight/models/weight_model.dart';
 import 'package:simple_weight/icons/scale_icon.dart';
-import 'package:simple_weight/widgets/edit_weight_history.dart';
+import 'package:simple_weight/styles/styles.dart';
+import 'package:simple_weight/settings/settings_page.dart';
+import 'package:simple_weight/widgets/view_average_weight_lost_per_week.dart';
 import 'package:simple_weight/widgets/view_total_weight_loss.dart';
 import 'package:simple_weight/widgets/weight_list.dart';
 
@@ -51,9 +53,9 @@ class _WeightsTabState extends State<WeightsTab> {
     }
   }
 
-  void _pushEditPastWeights(BuildContext context){
+  void _pushSettings(BuildContext context){
     Navigator.push(context, CupertinoPageRoute(
-      builder: (context) => EditWeightHistory(),
+      builder: (context) => SettingsPage(),
     ));
   }
 
@@ -63,6 +65,13 @@ class _WeightsTabState extends State<WeightsTab> {
       slivers: <Widget>[
         CupertinoSliverNavigationBar(
           largeTitle: Text('Weight'),
+          trailing: CupertinoButton(
+            onPressed: () => _pushSettings(context),
+            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+            minSize: 20,
+            child: Icon(CupertinoIcons.settings),
+          ),
+          heroTag: "Weights Tab",
         ),
 
         // Grid has 2 columns, 2 rows.
@@ -78,9 +87,9 @@ class _WeightsTabState extends State<WeightsTab> {
           delegate: SliverChildListDelegate(
             [
               Padding( 
-                padding: EdgeInsets.only(top: 14, bottom: 0, left: 10, right: 10),
+                padding: EdgeInsets.only(top: 10, bottom: 10, left: 10, right: 10),
                 child: Column(  
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -89,19 +98,12 @@ class _WeightsTabState extends State<WeightsTab> {
                         ViewTotalWeightLoss(),
                       ]
                     ),
-                    // Button pushes Navi to EditWeightHistory 
-                    CupertinoButton(
-                      onPressed: () => _pushEditPastWeights(context),
-                      padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-                      minSize: 20,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget> [
-                          Text("Edit Past Weights", style: TextStyle(fontSize: 12),),
-                          Icon(CupertinoIcons.gear),
-                        ],
-                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Text("Avg Loss Per Week:", style: TextStyle(color: CupertinoColors.inactiveGray, fontSize: 12)),
+                        ViewAverageWeeklyWeightLoss(),
+                      ]
                     ),
                   ],
                 ),
@@ -128,10 +130,10 @@ class _WeightsTabState extends State<WeightsTab> {
                       ),
                     ),
                     CupertinoButton.filled(
-                      child: Text('Submit Weight') ,
+                      child: Text('Submit Weight', style: Styles.buttonTextStyle), 
                       onPressed: () => _onSubmitWeight(),
-                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 30),
-                      minSize: 20,
+                      padding: EdgeInsets.symmetric(vertical: 8, horizontal: 36),
+                      minSize: 25,
                     ),  
                   ],
                 ),

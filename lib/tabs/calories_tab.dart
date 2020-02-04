@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:simple_weight/models/calorie_model.dart';
+import 'package:simple_weight/styles/styles.dart';
+import 'package:simple_weight/settings/settings_page.dart';
 import 'package:simple_weight/widgets/described_calories.dart';
 import 'package:simple_weight/widgets/calorie_list.dart';
 
@@ -47,6 +49,12 @@ class _CaloriesTabState extends State<CaloriesTab>{
     }
   }
 
+  void _pushSettings(BuildContext context){
+    Navigator.push(context, CupertinoPageRoute(
+      builder: (context) => SettingsPage(),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
   
@@ -54,6 +62,13 @@ class _CaloriesTabState extends State<CaloriesTab>{
       slivers: <Widget>[
         CupertinoSliverNavigationBar(
           largeTitle: Text('Calories'),
+          trailing: CupertinoButton(
+            onPressed: () => _pushSettings(context),
+            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+            minSize: 20,
+            child: Icon(CupertinoIcons.settings),
+          ),
+          heroTag: "Calories Tab",
         ),
         SliverPadding( 
           padding: EdgeInsets.all(10),
@@ -61,7 +76,7 @@ class _CaloriesTabState extends State<CaloriesTab>{
             delegate: SliverChildListDelegate(
               [
                 Padding(
-                  padding: EdgeInsets.only(bottom: 10),
+                  padding: EdgeInsets.only(bottom: 0),
                   child: Column(  
                     children: <Widget>[
                       Center(  
@@ -82,10 +97,10 @@ class _CaloriesTabState extends State<CaloriesTab>{
                               child: Icon(CupertinoIcons.minus_circled)
                             ),
                             Padding(
-                              padding: EdgeInsets.symmetric(vertical: 2.0, horizontal: 10.0),
+                              padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 10.0),
                               child: Text(
                                 '$_newCalories', 
-                                //style: TextStyle(fontSize: 30),
+                                style: Styles.biggerText,
                               )
                             ),
                             CupertinoButton(
@@ -99,14 +114,13 @@ class _CaloriesTabState extends State<CaloriesTab>{
                   ),
                 ),
                 Padding( 
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 100),
+                  padding: EdgeInsets.only(top: 0, bottom: 10, right: 100, left: 100),
                   child:  CupertinoButton.filled(
-                    child: Text('Add to Daily Total') ,
+                    child: Text("Add to Today's Total", style: Styles.buttonTextStyle,),
                     onPressed: () => _onSubmitCalories(),
                     padding: EdgeInsets.all(10.0),
+                  ),
                 ),
-                )
-                
               ], 
             ),
           ),

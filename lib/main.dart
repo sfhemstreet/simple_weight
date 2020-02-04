@@ -17,6 +17,7 @@ class MyApp extends StatelessWidget{
         // Streams Weight data stored in DB
         StreamProvider<List<WeightData>>( 
           create:(_) => WeightModel().weightStream,
+          initialData: List<WeightData>(),
           catchError: (context, obj){
             debugPrint('Stream Provider error - weight');
             debugPrint(obj);
@@ -26,6 +27,7 @@ class MyApp extends StatelessWidget{
         // Streams Calorie Data stored in DB
         StreamProvider<List<CalorieData>>( 
           create:(_) => CalorieModel().calorieStream,
+          initialData: List<CalorieData>(),
           catchError: (context, obj){
             debugPrint('Stream Provider error - calories');
             debugPrint(obj);
@@ -45,9 +47,12 @@ class MyApp extends StatelessWidget{
           title: 'Simple Weight',
           debugShowCheckedModeBanner: false,
           home: SimpleWeight(),
-          /*
+          
           builder: (BuildContext context, Widget child){
             Brightness brightness = MediaQuery.platformBrightnessOf(context);
+
+            Color textColor = brightness == Brightness.dark ?
+              CupertinoColors.white : CupertinoColors.black;
 
             Color primaryColor = brightness == Brightness.dark ? 
               CupertinoColors.activeBlue : CupertinoColors.activeBlue;
@@ -74,10 +79,16 @@ class MyApp extends StatelessWidget{
                   ),
                 ),
               ),
-              child: child,
+              child: DefaultTextStyle.merge(
+                style: TextStyle(
+                  color: textColor,
+                  
+                ), 
+                child: child,
+              ),
             );
           }
-          */
+          
         ),
       ),
     );

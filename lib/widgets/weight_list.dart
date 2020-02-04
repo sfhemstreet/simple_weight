@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_weight/database/weight_data.dart';
+import 'package:simple_weight/utils/time_convert.dart';
 
 /// Renders a sliver list of all weights in Database
 class WeightList extends StatelessWidget {
@@ -21,18 +22,21 @@ class WeightList extends StatelessWidget {
         delegate: SliverChildBuilderDelegate(
           (BuildContext context, int index){
             // Last weight must go on top, this reverses the list
-            final int currIndex = (allWeightData.length -1) - index;
+            final int currIndex = allWeightData.length > 0 ? (allWeightData.length -1) - index : 0;
             final WeightData item = allWeightData[currIndex];
             final WeightData prevItem = currIndex > 0 ? allWeightData[currIndex - 1] : null;
             final num weightDiff = currIndex > 0 ? item.weight - prevItem.weight : 0;
             final String trailingText = weightDiff > 0 ? "+" + weightDiff.toStringAsFixed(1) : weightDiff.toStringAsFixed(1);
             final Color color = weightDiff <= 0 ? CupertinoColors.activeBlue : CupertinoColors.destructiveRed;
 
+            final String timeText = TimeConvert().isStringToday(item.time) ? 
+              "Today, ${item.time}" : "${TimeConvert().getWeekdayFromFormattedString(item.time)}, ${item.time}";
+
             return Container(
               decoration: BoxDecoration(
                 border: Border(
                   top: BorderSide(
-                    color: CupertinoColors.inactiveGray
+                    color: CupertinoColors.separator
                   ),
                 ),
               ),
@@ -45,7 +49,7 @@ class WeightList extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(item.weight.toString()),
-                      Text(item.time, style: TextStyle(color: CupertinoColors.inactiveGray),),
+                      Text(timeText, style: TextStyle(color: CupertinoColors.inactiveGray),),
                     ],
                   ),
                   Text(trailingText, style: TextStyle(color: color)),

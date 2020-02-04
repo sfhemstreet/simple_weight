@@ -1,0 +1,43 @@
+import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
+import 'package:simple_weight/database/weight_data.dart';
+import 'package:simple_weight/utils/time_convert.dart';
+
+/// Displays total weight loss or gain in Text widget, gives color (and '+') accordingly.
+class ViewAverageWeeklyWeightLoss extends StatelessWidget {
+
+  @override 
+  Widget build(BuildContext context){
+    final List<WeightData> weights = Provider.of<List<WeightData>>(context);
+
+    if(weights == null || weights.length < 2){
+      return Text('');
+    }
+
+    DateTime startWeek = TimeConvert().stringToDateTime(weights[0].time);
+    num startWeight = weights[0].weight;
+    num numOfWeeks = 0;
+    num runningSum = 0;
+
+    for(int i = 0; i < weights.length; i++){
+      DateTime day = TimeConvert().stringToDateTime(weights[i].time);
+
+      Duration difference = day.difference(startWeek);
+
+      if(difference.inDays >= 7){
+        numOfWeeks++;
+        runningSum = runningSum + (weights[i].weight - startWeight);
+        startWeight = weights[i].weight;
+
+        //print(runningSum);
+      }
+    }
+
+    final num avgLoss = runningSum / numOfWeeks;
+    
+    final String text = avgLoss > 0 ? "+" + avgLoss.toStringAsFixed(1) : avgLoss.toStringAsFixed(1);
+    final Color color = avgLoss <= 0 ? CupertinoColors.activeBlue : CupertinoColors.destructiveRed;
+
+    return Text(text, style: TextStyle(color: color));
+  }
+}

@@ -2,20 +2,28 @@ import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_weight/database/calorie_data.dart';
 import 'package:simple_weight/database/weight_data.dart';
-import 'package:simple_weight/styles/styles.dart';
 import 'package:simple_weight/settings/settings_page.dart';
+import 'package:simple_weight/widgets/selected_graph_data.dart';
 import 'package:simple_weight/widgets/stats_info_chart.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
 import 'package:simple_weight/utils/time_convert.dart';
+import 'package:simple_weight/utils/weight_analysis.dart';
+import 'package:simple_weight/utils/calorie_analysis.dart';
 
+
+/// Displays timeline graph of weight history and calorie history,
+/// as well as general info on weight and calorie ie averages, min / max, etc.
 class StatsTab extends StatefulWidget {
   @override 
   _StatsTabState createState() => _StatsTabState();
 }
 
 class _StatsTabState extends State<StatsTab>{
+  
+  // These hold data of tapped area on graph (selection)
   DateTime _selectedTime;
   Map<String, num> _selectedMeasurements = Map<String, num>();
+
 
   void _onSelectionChanged(charts.SelectionModel model) {
     final selectedDatum = model.selectedDatum;
@@ -39,18 +47,22 @@ class _StatsTabState extends State<StatsTab>{
 
   void _pushSettings(BuildContext context){
     Navigator.push(context, CupertinoPageRoute(
-      builder: (context) => SettingsPage(),
+      builder: (BuildContext context) => SettingsPage(),
     ));
   }
 
   @override
   Widget build(BuildContext context) {
     
+    // All Weight and Calorie Data, these are required for everything 
     final List<WeightData> _weights = Provider.of<List<WeightData>>(context);
     final List<CalorieData> _calories = Provider.of<List<CalorieData>>(context);
 
+    // Children for SliverListDelegate 
+    // Holds Graph, Selected Data, and StatsInfoChart, or loading bar, or "No data" text
     List<Widget> _children = List<Widget>();
 
+    // Still getting data show loading sign
     if(_calories == null || _weights == null){
       _children.add(
         Padding( 
@@ -64,8 +76,21 @@ class _StatsTabState extends State<StatsTab>{
         )
       );
     }
+    // Data comes up empty, show Text 
+    else if(_calories.length == 0 || _weights.length == 0){
+      _children.add(
+        Center(
+          child: Padding( 
+            padding: EdgeInsets.only(top: 200),
+            child: Text("Add Calorie and Weight Data!"),
+          ),
+        )
+      );
+    }
+    // We have Data, add Graph, SelectedGraphData, and StatsInfoChart to _children
     else{
-      // Convert data into GraphData so the TimeSeries graph can use them (requires DateTime instead of String for 'time' field).
+      // Convert data into GraphData so the TimeSeries graph 
+      // can use them (requires DateTime instead of String for 'time' field).
       final formattedWeights = _weights.map((weight) => 
         GraphData(
           time: weight.time, 
@@ -78,20 +103,17 @@ class _StatsTabState extends State<StatsTab>{
           number: calorie.calories)
         ).toList();
       
-      final _seriesLineData = List<charts.Series<GraphData, DateTime>>();
-      
-      _seriesLineData.add(
+      // These are the lines being drawn on the graph
+      final _seriesLineData = <charts.Series<GraphData, DateTime>>[
         charts.Series(
           data: formattedWeights,
           id: 'Weight',
           domainFn: (GraphData weight, _) => weight.time,
           measureFn: (GraphData weight, _) => weight.number,
           colorFn: (__, _) => charts.ColorUtil.fromDartColor(CupertinoColors.activeBlue),
-        )
-      );
-
-      // The set attribute makes it line up with secondary Y axis showing calorie numbers
-      _seriesLineData.add(
+        ),
+        // The set attribute below makes the calories data
+        // line up with secondary Y axis, which shows calorie numbers.
         charts.Series(
           data: formattedCalories,
           id: "Calories",
@@ -99,15 +121,16 @@ class _StatsTabState extends State<StatsTab>{
           measureFn: (GraphData calorie, _) => calorie.number,
           colorFn: (__, _) => charts.ColorUtil.fromDartColor(CupertinoColors.activeGreen),
         )..setAttribute(charts.measureAxisIdKey, 'secondaryMeasureAxisId'),
-      );
+      ];
       
+      // Display graph, graph must be given size by parent
       _children.add(
         SizedBox( 
           height: 470.0,
-          width: 300,
+          //width: 300,
           child: charts.TimeSeriesChart(
             _seriesLineData,
-            defaultRenderer: charts.LineRendererConfig(includeArea: false, stacked: true, includePoints: true),
+            defaultRenderer: charts.LineRendererConfig(includeArea: false, stacked: false, includePoints: true),
             animate: false,
             primaryMeasureAxis: charts.NumericAxisSpec(
               tickProviderSpec: charts.BasicNumericTickProviderSpec(zeroBound: false, desiredTickCount: 10)
@@ -144,20 +167,23 @@ class _StatsTabState extends State<StatsTab>{
         ),
       );
 
+      // SelectedGraphData 
       // Displays row of data from tapped point on graph
       _children.add(
-        SelectedData(
+        SelectedGraphData(
           time: _selectedTime, 
           measurements: _selectedMeasurements
         ),
       );
 
+      // Analysis Classes are required for the StatsInfoChart below
+      final weightAnalysis = WeightAnalysis(_weights);
+      final calorieAnalysis = CalorieAnalysis(_calories);
+
+      // StatsInfoChart
       // Displays general weight and calorie stats 
       _children.add( 
-        StatsInfoChart(
-          weightData: _weights, 
-          calorieData: _calories
-        ),
+        StatsInfoChart(weightAnalysis, calorieAnalysis),
       );
     }
     
@@ -181,50 +207,9 @@ class _StatsTabState extends State<StatsTab>{
   }
 }
 
-/// Displays data from tapped area of graph.
-class SelectedData extends StatelessWidget {
-  final DateTime time;
-  final Map<String, num> measurements;
 
-  SelectedData({this.time, this.measurements});
-
-  @override 
-  Widget build(BuildContext context){
-    List<Widget> children = [];
-    
-    if (time != null) {
-      children.add(
-        Text(TimeConvert().dateTimeToFormattedString(time))
-      );
-
-      measurements?.forEach((String series, num value) {
-        children.add(
-          RichText(
-            text: TextSpan(
-              children: [
-                TextSpan(text: '$series: ', style: Styles.descriptor),
-                TextSpan(text: '$value', style: DefaultTextStyle.of(context).style),
-              ],
-            ),
-          ),
-        );
-      });
-    } else {
-      children.add(Text(" "));
-    }
-    
-    return Padding(
-      padding: EdgeInsets.only(bottom: 4),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: children,
-      ),
-    );
-  }
-}
-
-/// Graph needs to know whats Series it needs, convert WeightData and CalorieData to this.
+/// Series data type for TimeLine graph
+/// Converts String time to DateTime so data works in TimeLine graph.
 class GraphData {
   DateTime time;
   num number;

@@ -67,6 +67,4 @@ class WeightModel {
   void dispose(){
     _streamController.close();
   }
-
-  
 }

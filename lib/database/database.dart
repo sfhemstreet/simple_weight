@@ -11,7 +11,7 @@ class DBProvider {
   DBProvider._();
   static final DBProvider db = DBProvider._();
   static Database _database;
-  static const String DB_NAME = 'my_simple_weight_database.db';
+  static const String DB_NAME = 'simple_weight_db_9.db';
 
   Future<Database> get database async {
     if (_database != null){
@@ -37,6 +37,7 @@ class DBProvider {
       CREATE TABLE weights (
         time TEXT PRIMARY KEY,
         weight REAL,
+        day_of_week TEXT,
         hours_since_epoch INTEGER
       )
       '''
@@ -46,13 +47,13 @@ class DBProvider {
       CREATE TABLE calories (
         time TEXT PRIMARY KEY,
         calories INTEGER,
+        day_of_week TEXT,
         hours_since_epoch INTEGER
       );
       '''
     );
+    
     await batch.commit();
-
-    await _insertSampleData(db);
   }
 
   /// Inserts calorie into calories table, replaces old data if same day is given. 
@@ -64,19 +65,6 @@ class DBProvider {
       calories.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
-  }
-
-  Future<List<CalorieData>> calories() async {
-    final Database db = await database;
-    final List<Map<String, dynamic>> maps = await db.query('calories');
-
-    // Convert the List<Map<String, dynamic> into a List<CalorieData>.
-    return List.generate(maps.length, (i) {
-      return CalorieData(
-        time: maps[i]['time'],
-        calories: maps[i]['calories']
-      );
-    });
   }
 
   Future<void> updateCalories(CalorieData calories) async {
@@ -126,20 +114,6 @@ class DBProvider {
     );
   }
 
-  Future<List<WeightData>> weights() async {
-    final Database db = await database;
-
-    final List<Map<String, dynamic>> maps = await db.query('weights');
-
-    // Convert the List<Map<String, dynamic> into a List<WeightData>.
-    return List.generate(maps.length, (i) {
-      return WeightData(
-        time: maps[i]['time'],
-        weight: maps[i]['weight']
-      );
-    });
-  }
-
   Future<void> updateWeight(WeightData weight) async {
     final db = await database;
 
@@ -177,52 +151,4 @@ class DBProvider {
     return list;
   }
 
-  /// This inserts sample information so the app has data already.
-  Future<void> _insertSampleData(Database db) async {
-
-    insertWeight(WeightData(time: "Jan 2, 2020", weight: 146.4));
-    insertWeight(WeightData(time: "Jan 3, 2020", weight: 144.8));
-    insertWeight(WeightData(time: "Jan 7, 2020", weight: 144));
-    insertWeight(WeightData(time: "Jan 8, 2020", weight: 141.8));
-    insertWeight(WeightData(time: "Jan 9, 2020", weight: 140.2));
-    insertWeight(WeightData(time: "Jan 10, 2020", weight: 141.8));
-    insertWeight(WeightData(time: "Jan 12, 2020", weight: 144));
-    insertWeight(WeightData(time: "Jan 13, 2020", weight: 144.4));
-    insertWeight(WeightData(time: "Jan 14, 2020", weight: 140.8));
-    insertWeight(WeightData(time: "Jan 15, 2020", weight: 140.8));
-    insertWeight(WeightData(time: "Jan 16, 2020", weight: 140.6));
-    insertWeight(WeightData(time: "Jan 17, 2020", weight: 140.8));
-    insertWeight(WeightData(time: "Jan 18, 2020", weight: 142.2));
-    insertWeight(WeightData(time: "Jan 23, 2020", weight: 144.7));
-    insertWeight(WeightData(time: "Jan 24, 2020", weight: 143.8));
-    insertWeight(WeightData(time: "Jan 25, 2020", weight: 142.8));
-    insertWeight(WeightData(time: "Jan 26, 2020", weight: 143.8));
-    insertWeight(WeightData(time: "Jan 27, 2020", weight: 143.8));
-    insertWeight(WeightData(time: "Jan 28, 2020", weight: 141.8));
-    insertWeight(WeightData(time: "Jan 29, 2020", weight: 140.2));
-    insertWeight(WeightData(time: "Jan 30, 2020", weight: 141.4));
-
-    insertCalories(CalorieData(time: "Jan 2, 2020", calories: 1600));
-    insertCalories(CalorieData(time: "Jan 3, 2020", calories: 1500));
-    insertCalories(CalorieData(time: "Jan 7, 2020", calories: 1400));
-    insertCalories(CalorieData(time: "Jan 8, 2020", calories: 1400));
-    insertCalories(CalorieData(time: "Jan 9, 2020", calories: 1500));
-    insertCalories(CalorieData(time: "Jan 10, 2020", calories: 1600));
-    insertCalories(CalorieData(time: "Jan 12, 2020", calories: 1700));
-    insertCalories(CalorieData(time: "Jan 13, 2020", calories: 1500));
-    insertCalories(CalorieData(time: "Jan 14, 2020", calories: 1500));
-    insertCalories(CalorieData(time: "Jan 15, 2020", calories: 1400));
-    insertCalories(CalorieData(time: "Jan 16, 2020", calories: 1600));
-    insertCalories(CalorieData(time: "Jan 17, 2020", calories: 1500));
-    insertCalories(CalorieData(time: "Jan 18, 2020", calories: 1600));
-    insertCalories(CalorieData(time: "Jan 23, 2020", calories: 1400));
-    insertCalories(CalorieData(time: "Jan 24, 2020", calories: 1500));
-    insertCalories(CalorieData(time: "Jan 25, 2020", calories: 1600));
-    insertCalories(CalorieData(time: "Jan 26, 2020", calories: 1500));
-    insertCalories(CalorieData(time: "Jan 27, 2020", calories: 1500));
-    insertCalories(CalorieData(time: "Jan 28, 2020", calories: 1600));
-    insertCalories(CalorieData(time: "Jan 29, 2020", calories: 1600));
-    insertCalories(CalorieData(time: "Jan 30, 2020", calories: 1400));
-
-  }
 }

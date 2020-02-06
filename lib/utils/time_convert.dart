@@ -45,11 +45,20 @@ class TimeConvert {
     return hoursSinceEpoch;
   }
 
+  String getWeekDay(){
+    final int dayNumber = DateTime.now().weekday;
+    return intToWeekdayString(dayNumber);
+  }
+
   String getWeekdayFromFormattedString(String time){
     DateTime dateTime = stringToDateTime(time);
     int dayOfWeek = dateTime.weekday;
 
-    switch(dayOfWeek){
+    return intToWeekdayString(dayOfWeek);
+  }
+
+  String intToWeekdayString(int day){
+    switch(day){
       case 1:
         return "Monday";
       case 2: 

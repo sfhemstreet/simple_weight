@@ -10,7 +10,7 @@ class ViewTotalWeightLoss extends StatelessWidget {
     final List<WeightData> weights = Provider.of<List<WeightData>>(context);
 
     if(weights == null || weights.length < 2){
-      return Text('');
+      return Text('0');
     }
 
     final num start = weights[0].weight;

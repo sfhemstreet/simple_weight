@@ -17,7 +17,6 @@ class MyApp extends StatelessWidget{
         // Streams Weight data stored in DB
         StreamProvider<List<WeightData>>( 
           create:(_) => WeightModel().weightStream,
-          initialData: List<WeightData>(),
           catchError: (context, obj){
             debugPrint('Stream Provider error - weight');
             debugPrint(obj);
@@ -27,7 +26,6 @@ class MyApp extends StatelessWidget{
         // Streams Calorie Data stored in DB
         StreamProvider<List<CalorieData>>( 
           create:(_) => CalorieModel().calorieStream,
-          initialData: List<CalorieData>(),
           catchError: (context, obj){
             debugPrint('Stream Provider error - calories');
             debugPrint(obj);
@@ -47,25 +45,33 @@ class MyApp extends StatelessWidget{
           title: 'Simple Weight',
           debugShowCheckedModeBanner: false,
           home: SimpleWeight(),
-          
           builder: (BuildContext context, Widget child){
-            Brightness brightness = MediaQuery.platformBrightnessOf(context);
 
-            Color textColor = brightness == Brightness.dark ?
+            // Configure theme color settings for Dark and Light Modes
+            final Brightness brightness = MediaQuery.platformBrightnessOf(context);
+
+            final Color textColor = brightness == Brightness.dark ?
               CupertinoColors.white : CupertinoColors.black;
 
-            Color primaryColor = brightness == Brightness.dark ? 
+            final Color primaryColor = brightness == Brightness.dark ? 
               CupertinoColors.activeBlue : CupertinoColors.activeBlue;
 
-            Color primaryContrastingColor = brightness == Brightness.dark ? 
+            final Color primaryContrastingColor = brightness == Brightness.dark ? 
               CupertinoColors.white : CupertinoColors.black;
 
+            final Color barBackgroundColor = brightness == Brightness.dark ?
+              Color.fromRGBO(43, 43, 43, 0.7) : Color.fromRGBO(225, 238, 253, 0.7);
+
+            final Color scaffoldBackgroundColor = brightness == Brightness.dark ? 
+              CupertinoColors.black : CupertinoColors.white;
 
             return CupertinoTheme(
               data: CupertinoThemeData(
                 brightness: brightness,
                 primaryColor: primaryColor,
                 primaryContrastingColor: primaryContrastingColor,
+                barBackgroundColor: barBackgroundColor,
+                scaffoldBackgroundColor: scaffoldBackgroundColor,
                 textTheme: CupertinoTextThemeData(  
                   primaryColor: primaryColor,
                   textStyle: TextStyle(
@@ -82,13 +88,11 @@ class MyApp extends StatelessWidget{
               child: DefaultTextStyle.merge(
                 style: TextStyle(
                   color: textColor,
-                  
                 ), 
                 child: child,
               ),
             );
           }
-          
         ),
       ),
     );

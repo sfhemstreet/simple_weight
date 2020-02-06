@@ -1,43 +1,46 @@
 import 'package:flutter/cupertino.dart';
+import 'package:simple_weight/settings/change_daily_calorie_target_popup.dart';
+import 'package:simple_weight/settings/change_weight_goal_popup.dart';
+import 'package:simple_weight/settings/delete_data_popup.dart';
 import 'package:simple_weight/settings/edit_calorie_history.dart';
 import 'package:simple_weight/settings/edit_weight_history.dart';
 
+/// Settings Page contains list of actions for user settings
 class SettingsPage extends StatelessWidget{
 
   void _pushChangeWeightGoal(BuildContext context){
-    /*
-    Navigator.push(context, CupertinoPageRoute(
-      builder: (context) => EditWeightHistory(),
-    ));
-    */
+    showCupertinoModalPopup(
+      context: context, 
+      builder: (BuildContext context) => ChangeGoalWeightPopUp(),
+    );
   }
 
   void _pushChangeDailyCalorieTarget(BuildContext context){
-    /*
-    Navigator.push(context, CupertinoPageRoute(
-      builder: (context) => EditWeightHistory(),
-    ));
-    */
+    showCupertinoModalPopup(
+      context: context, 
+      builder: (BuildContext context) => ChangeDailyCalorieTargetPopUp(),
+    );
   }
 
   void _pushEditWeights(BuildContext context){
     Navigator.push(context, CupertinoPageRoute(
+      fullscreenDialog: true,
       builder: (context) => EditWeightHistory(),
     ));
   }
 
   void _pushEditCalories(BuildContext context){
     Navigator.push(context, CupertinoPageRoute(
+      fullscreenDialog: true,
       builder: (context) => EditCalorieHistory(),
     ));
   }
 
   void _pushDeleteData(BuildContext context){
-    /*
-    Navigator.push(context, CupertinoPageRoute(
-      builder: (context) => EditDeleteData(),
-    ));
-    */
+    showCupertinoModalPopup(
+      context: context,
+      builder: (BuildContext context) => DeleteDataPopUp(),
+    );
   }
 
   @override 
@@ -68,7 +71,7 @@ class SettingsPage extends StatelessWidget{
                   child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    Text("Change Weight Goal", style: DefaultTextStyle.of(context).style), 
+                    Text("Change Goal Weight", style: DefaultTextStyle.of(context).style), 
                     Icon(CupertinoIcons.bookmark),
                   ],
                   ),

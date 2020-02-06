@@ -25,6 +25,7 @@ class CalorieAnalysis {
 
   /// Average caloric intake, avg weekend / weekday caloric intake, min/max caloric intake
   void _runAnalysis(){
+
     String today = TimeConvert().getFormattedString(); 
 
     int totalSum = 0;
@@ -41,17 +42,17 @@ class CalorieAnalysis {
 
     for(int i = 0; i < calorieData.length; i++){
       final CalorieData c = calorieData[i];
-      final int dayOfWeek = TimeConvert().stringToDateTime(c.time).weekday;
+      final String dayOfWeek = c.dayOfWeek;
 
       // Calc total sum
       totalSum += c.calories;
       // Calc weekday sum
-      if(dayOfWeek != 6 && dayOfWeek != 7){
+      if(dayOfWeek != "Saturday" && dayOfWeek != "Sunday"){
         weekdaySum += c.calories;
         weekdayLength++;
       }
       // Calc weekend sum
-      if(dayOfWeek == 6 || dayOfWeek == 7){
+      if(dayOfWeek == "Saturday" || dayOfWeek == "Sunday"){
         weekendSum += c.calories;
         weekendLength++;
       }
@@ -68,9 +69,10 @@ class CalorieAnalysis {
       }
     }
 
-    _averageCaloricIntake = totalSum ~/ totalLength;
-    _weekdayAvg = weekdaySum ~/ weekdayLength;
-    _weekendAvg = weekendSum ~/ weekendLength;
+    // Do not divide by zero
+    _averageCaloricIntake = totalLength > 0 ? totalSum ~/ totalLength : totalSum;
+    _weekdayAvg = weekdayLength > 0 ? weekdaySum ~/ weekdayLength : weekdaySum;
+    _weekendAvg = weekendLength > 0 ? weekendSum ~/ weekendLength : weekendSum;
     _minIntake = min;
     _maxIntake = max;
   }

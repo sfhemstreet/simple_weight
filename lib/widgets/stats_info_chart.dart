@@ -1,152 +1,251 @@
 import 'package:flutter/cupertino.dart';
-import 'package:simple_weight/database/calorie_data.dart';
-import 'package:simple_weight/database/weight_data.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_weight/styles/styles.dart';
+import 'package:simple_weight/utils/constants.dart';
 import 'package:simple_weight/utils/weight_analysis.dart';
 import 'package:simple_weight/utils/calorie_analysis.dart';
 
 class StatsInfoChart extends StatelessWidget{
-  CalorieAnalysis calorieInfo;
-  WeightAnalysis weightInfo;
+  final CalorieAnalysis calorieInfo;
+  final WeightAnalysis weightInfo;
 
-  StatsInfoChart({List<WeightData> weightData, List<CalorieData> calorieData}){
-    this.calorieInfo = CalorieAnalysis(calorieData);
-    this.weightInfo = WeightAnalysis(weightData);
-  }
+  StatsInfoChart(this.weightInfo, this.calorieInfo);
 
   @override 
   Widget build(BuildContext context){
-    final num overallWeightLoss = weightInfo.overallWeightLoss;
-    final overallWeightLossText = overallWeightLoss > 0 ? "+" + overallWeightLoss.toStringAsFixed(1) : overallWeightLoss.toStringAsFixed(1);
+    return FutureBuilder(
+      future: SharedPreferences.getInstance(),
+      builder: (BuildContext context, AsyncSnapshot snapshot){
 
-    return Container(
-      padding: EdgeInsets.only(top: 20, left: 6, right: 6, bottom: 100),
-      decoration: BoxDecoration(
-        border: Border(
-          top: BorderSide(
-            color: CupertinoColors.separator,
-          ),
-        ),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
+        int calorieTarget;
+        int weightTarget;
+
+        if(snapshot.hasError){
+          calorieTarget = Constants.DEFAULT_CALORIE_TARGET;
+          weightTarget = Constants.DEFAULT_GOAL_WEIGHT;
+        }
+        else if(snapshot.hasData){
+          calorieTarget = snapshot.data.getInt('calorie_target') ?? Constants.DEFAULT_CALORIE_TARGET;
+          weightTarget = snapshot.data.getInt('weight_target') ?? Constants.DEFAULT_GOAL_WEIGHT;
+        }
+        else {
+          calorieTarget = Constants.DEFAULT_CALORIE_TARGET;
+          weightTarget = Constants.DEFAULT_GOAL_WEIGHT;
+        }
+
+        final String overallWeightLossText = weightInfo.overallWeightLoss > 0 ? "+" + weightInfo.overallWeightLoss.toStringAsFixed(1) : weightInfo.overallWeightLoss.toStringAsFixed(1);
+        final Color overallWeightLossColor = weightInfo.overallWeightLoss > 0 ? CupertinoColors.destructiveRed : CupertinoColors.activeBlue;
+
+        final String averageWeightLossPerWeekText = weightInfo.averageWeightLossPerWeek > 0 ? "+" + weightInfo.averageWeightLossPerWeek.toStringAsFixed(1) : weightInfo.averageWeightLossPerWeek.toStringAsFixed(1);
+        final Color avgWeightLossPerWeekColor = weightInfo.averageWeightLossPerWeek > 0 ? CupertinoColors.destructiveRed : CupertinoColors.activeBlue;
+
+        final Color weekendCaloriesColor = calorieInfo.weekendAverage > calorieTarget ? CupertinoColors.destructiveRed : CupertinoColors.activeBlue;
+        final Color weekdayCalorieColor = calorieInfo.weekdayAverage > calorieTarget ? CupertinoColors.destructiveRed : CupertinoColors.activeBlue;
+
+        // Configure gradient settings for Dark and Light Modes
+        final Brightness brightness = MediaQuery.platformBrightnessOf(context);
+
+        final List<Color> gradient = brightness == Brightness.dark ? Styles.darkGradient : Styles.lightGradient;
           
-          // Calorie Stats 
-          Padding(
-            padding: EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 2),
-            child: Text(
-              "Calories:", 
-              style: TextStyle(decoration: TextDecoration.underline, decorationColor: CupertinoColors.inactiveGray),
-            ),
-          ),
-          // Weekend WeekDay Average 
-          Padding(
-            padding: EdgeInsets.only(left:8.0, right: 8, top: 8, bottom: 4),
-            child: RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(text: "Average Weekend:   ", style: Styles.descriptor),
-                  TextSpan(text: "${calorieInfo.weekendAverage} calories", style: DefaultTextStyle.of(context).style),
-                ],
-              ),
-            ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(left:8.0, right: 8, top: 4, bottom: 4),
-            child: RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(text: "Average Weekday:   ", style: Styles.descriptor),
-                  TextSpan(text: "${calorieInfo.weekdayAverage} calories", style: DefaultTextStyle.of(context).style),
-                ],
-              ),
-            ),
-          ),
-          // Min Max
-          Padding(
-            padding: EdgeInsets.only(left:8.0, right: 8, top: 4, bottom: 4),
-            child: RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(text: "Lowest Calorie Day:    ", style: Styles.descriptor),
-                  TextSpan(text: "${calorieInfo.minCalorie.calories}  ${calorieInfo.minCalorie.time}", style: DefaultTextStyle.of(context).style),
-                ],
-              ),
-            ),
-          ),
-          // Min / Max Time
-          Padding(
-            padding: EdgeInsets.only(left:8.0, right: 8, top: 4, bottom: 8),
-            child: RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(text: "Highest Calorie Day:   ", style: Styles.descriptor),
-                  TextSpan(text: "${calorieInfo.maxCalorie.calories}  ${calorieInfo.maxCalorie.time}", style: DefaultTextStyle.of(context).style),
-                ],
-              ),
-            ),
-          ),
+        final Color containerColor = brightness == Brightness.dark ? 
+          Color.fromRGBO(0, 0, 0, 0) : Color.fromRGBO(255, 255, 255, 0.0);
 
-          // Weight Stats
-          Padding(
-            padding: EdgeInsets.only(left: 8, right: 8, top: 10, bottom: 2),
-            child: Text(
-              "Weight:", 
-              style: TextStyle(decoration: TextDecoration.underline, decorationColor: CupertinoColors.inactiveGray),
+        // The spaces in the 1st Text widgets in each row are there 
+        // to line up the 2nd items in the row in a straight column.
+        // There is probably a better way to do this but this was the most straight forward.
+        return Container(
+          padding: EdgeInsets.only(top: 20, bottom: 90, left: 20, right: 20),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: gradient,
             ),
-          ),
-          // Overall Weight Loss,
-          Padding(
-            padding: EdgeInsets.only(left:8.0, right: 8, top: 8, bottom: 4),
-            child: RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(text: "Overall Weight Loss:   ", style: Styles.descriptor),
-                  TextSpan(text: "$overallWeightLossText", style: DefaultTextStyle.of(context).style),
-                ],
+            border: Border(
+              top: BorderSide(
+                color: CupertinoColors.separator,
               ),
             ),
           ),
-          // Avg weight
-          Padding(
-            padding: EdgeInsets.only(left:8.0, right: 8, top: 4, bottom: 4),
-            child: RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(text: "Average Weight:  ", style: Styles.descriptor),
-                  TextSpan(text: "${weightInfo.averageWeight.toStringAsFixed(1)}", style: DefaultTextStyle.of(context).style),
-                ],
-              ),
+          child: Center(
+            child: Column(
+              children: <Widget>[
+                Container(
+                  margin: EdgeInsets.all(15),
+                  padding: EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    borderRadius: new BorderRadius.all(new Radius.circular(20.0)),
+                    color: containerColor,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      // Calorie Stats 
+                      Padding(
+                        padding: EdgeInsets.only(left: 0, right: 8, top: 8, bottom: 8),
+                        child: Text(
+                          "Calories:", 
+                          style: TextStyle(decoration: TextDecoration.underline, decorationColor: CupertinoColors.inactiveGray),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Text("Daily Calorie Target:       ", style: Styles.descriptor),
+                            Text("$calorieTarget calories"),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Text("Average Weekend:         ", style: Styles.descriptor),
+                            Text("${calorieInfo.weekendAverage}", 
+                              style: DefaultTextStyle.of(context).style.copyWith(color: weekendCaloriesColor)),
+                            Text(" calories"),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Text("Average Weekday:         ", style: Styles.descriptor),
+                            Text("${calorieInfo.weekdayAverage}", 
+                              style: DefaultTextStyle.of(context).style.copyWith(color: weekdayCalorieColor)),
+                            Text(" calories"),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Text("Lowest Calorie Day:       ", style: Styles.descriptor),
+                            Text("${calorieInfo.minCalorie.calories}  ${calorieInfo.minCalorie.time}"),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Text("Highest Calorie Day:      ", style: Styles.descriptor),
+                            Text("${calorieInfo.maxCalorie.calories}  ${calorieInfo.maxCalorie.time}"),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.all(15),
+                  padding: EdgeInsets.all(15),
+                  decoration: BoxDecoration(
+                    borderRadius: new BorderRadius.all(new Radius.circular(20.0)),
+                    color: containerColor,
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      // Weight Stats
+                      Padding(
+                        padding: EdgeInsets.only(left: 0, right: 8, top: 8, bottom: 8),
+                        child: Text(
+                          "Weight:", 
+                          style: TextStyle(decoration: TextDecoration.underline, decorationColor: CupertinoColors.inactiveGray),
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Text("Goal Weight:                   ", style: Styles.descriptor),
+                            Text("$weightTarget"),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Text("Overall Weight Loss:      ", style: Styles.descriptor),
+                            Text("$overallWeightLossText", 
+                              style: DefaultTextStyle.of(context).style.copyWith(color: overallWeightLossColor)),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Text("Avg Loss Per Week:       ", style: Styles.descriptor),
+                            Text("$averageWeightLossPerWeekText", 
+                              style: DefaultTextStyle.of(context).style.copyWith(color: avgWeightLossPerWeekColor)),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Text("Average Weight:             ", style: Styles.descriptor),
+                            Text("${weightInfo.averageWeight.toStringAsFixed(1)}"),
+                          ],
+                        ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Text("Lowest Weight:               ", style: Styles.descriptor),
+                            Text("${weightInfo.minWeight.weight}  ${weightInfo.minWeight.time}"),
+                          ],
+                        ),   
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: <Widget>[
+                            Text("Highest Weight:              ", style: Styles.descriptor),
+                            Text("${weightInfo.maxWeight.weight}  ${weightInfo.maxWeight.time}"),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
-          // Min / Max Weight
-          Padding(
-            padding: EdgeInsets.only(left:8.0, right: 8, top: 4, bottom: 4),
-            child: RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(text: "Lowest Weight:    ", style: Styles.descriptor),
-                  TextSpan(text: "${weightInfo.minWeight.weight}  ${weightInfo.minWeight.time}", style: DefaultTextStyle.of(context).style),
-                ],
-              ),
-            ),
-          ),
-          // Min / Max dates
-          Padding(
-            padding: EdgeInsets.only(left:8.0, right: 8, top: 4, bottom: 8),
-            child: RichText(
-              text: TextSpan(
-                children: [
-                  TextSpan(text: "Highest Weight:   ", style: Styles.descriptor),
-                  TextSpan(text: "${weightInfo.maxWeight.weight}  ${weightInfo.maxWeight.time}", style: DefaultTextStyle.of(context).style),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

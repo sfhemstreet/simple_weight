@@ -24,4 +24,31 @@ abstract class Styles {
     color: CupertinoColors.inactiveGray, 
     fontSize: 13
   );
+
+  static const List<Color> darkGradient = <Color>[
+      CupertinoColors.black,
+      Color.fromRGBO(0, 17, 103, 0.3),
+      Color.fromRGBO(57, 0, 58, 0.4),
+      Color.fromRGBO(27, 51, 3, 0.3),
+      Color.fromRGBO(36, 4, 4, 0.5),
+      Color.fromRGBO(53, 22, 86, 0.5),
+    ]; 
+
+  static const List<Color> darkerGradient = <Color>[
+      Color.fromRGBO(0, 17, 103, 0.1),
+      Color.fromRGBO(57, 0, 58, 0.01),
+      Color.fromRGBO(27, 51, 3, 0.01),
+      Color.fromRGBO(36, 4, 4, 0.01),
+      Color.fromRGBO(53, 22, 86, 0.02),
+    ]; 
+
+  static const List<Color> lightGradient = <Color>[
+      Color.fromRGBO(8, 96, 95, 0.2),
+      Color.fromRGBO(23, 126, 137, 0.1),
+      Color.fromRGBO(89, 131, 129, 0.1),
+      Color.fromRGBO(142, 107, 149, 0.1),
+      Color.fromRGBO(162, 173, 89, 0.3),
+    ];
+
+  
 }

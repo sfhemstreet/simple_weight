@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:simple_weight/database/weight_data.dart';
 import 'package:simple_weight/utils/time_convert.dart';
 
-/// Displays total weight loss or gain in Text widget, gives color (and '+') accordingly.
+/// Displays average weekly weight loss or gain in Text widget, gives color (and '+') accordingly.
 class ViewAverageWeeklyWeightLoss extends StatelessWidget {
 
   @override 
@@ -11,7 +11,7 @@ class ViewAverageWeeklyWeightLoss extends StatelessWidget {
     final List<WeightData> weights = Provider.of<List<WeightData>>(context);
 
     if(weights == null || weights.length < 2){
-      return Text('');
+      return Text('0');
     }
 
     DateTime startWeek = TimeConvert().stringToDateTime(weights[0].time);
@@ -31,6 +31,10 @@ class ViewAverageWeeklyWeightLoss extends StatelessWidget {
 
         //print(runningSum);
       }
+    }
+
+    if(numOfWeeks == 0){
+      return Text("0", style: TextStyle(color: CupertinoColors.activeBlue));
     }
 
     final num avgLoss = runningSum / numOfWeeks;

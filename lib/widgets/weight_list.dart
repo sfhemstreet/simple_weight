@@ -10,8 +10,24 @@ class WeightList extends StatelessWidget {
     final List<WeightData> allWeightData = Provider.of<List<WeightData>>(context);
 
     if(allWeightData == null){
-      return Center(
-        child: CupertinoActivityIndicator(),
+      return SliverPadding(
+        padding: const EdgeInsets.only(top: 100),
+        sliver: SliverToBoxAdapter(
+          child: Center(
+            child: CupertinoActivityIndicator(),
+          )
+        ),
+      );
+    }
+
+    if(allWeightData.length == 0){
+      return SliverPadding(
+        padding: const EdgeInsets.only(top: 100),
+        sliver: SliverToBoxAdapter(
+          child: Center( 
+            child: Text("Keep Track of Weight!"),
+          ),
+        ),
       );
     }
 
@@ -23,20 +39,37 @@ class WeightList extends StatelessWidget {
           (BuildContext context, int index){
             // Last weight must go on top, this reverses the list
             final int currIndex = allWeightData.length > 0 ? (allWeightData.length -1) - index : 0;
+
             final WeightData item = allWeightData[currIndex];
+            
             final WeightData prevItem = currIndex > 0 ? allWeightData[currIndex - 1] : null;
+
             final num weightDiff = currIndex > 0 ? item.weight - prevItem.weight : 0;
+
             final String trailingText = weightDiff > 0 ? "+" + weightDiff.toStringAsFixed(1) : weightDiff.toStringAsFixed(1);
+
             final Color color = weightDiff <= 0 ? CupertinoColors.activeBlue : CupertinoColors.destructiveRed;
 
             final String timeText = TimeConvert().isStringToday(item.time) ? 
-              "Today, ${item.time}" : "${TimeConvert().getWeekdayFromFormattedString(item.time)}, ${item.time}";
+              "Today, ${item.time}" : "${item.dayOfWeek}, ${item.time}";
+
+            final Color bottomBorderColor = index + 1 == allWeightData.length ? CupertinoColors.separator : Color.fromRGBO(0, 0, 0, 0); 
+
+            // Configure gradient settings for Dark and Light Modes
+            final Brightness brightness = MediaQuery.platformBrightnessOf(context);
+
+            final Color containerColor = brightness == Brightness.dark ? Color.fromRGBO(0, 0, 0, 0.5) : Color.fromRGBO(255, 255, 255, 0.5);
+            
 
             return Container(
               decoration: BoxDecoration(
+                color: containerColor,
                 border: Border(
                   top: BorderSide(
                     color: CupertinoColors.separator
+                  ),
+                  bottom: BorderSide(
+                    color: bottomBorderColor
                   ),
                 ),
               ),

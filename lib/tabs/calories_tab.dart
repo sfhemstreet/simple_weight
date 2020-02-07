@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:simple_weight/database/calorie_data.dart';
 import 'package:simple_weight/models/calorie_model.dart';
+import 'package:simple_weight/models/calorie_target_model.dart';
 import 'package:simple_weight/styles/styles.dart';
 import 'package:simple_weight/settings/settings_page.dart';
 import 'package:simple_weight/utils/constants.dart';
@@ -17,42 +17,37 @@ class CaloriesTab extends StatefulWidget{
 }
 
 class _CaloriesTabState extends State<CaloriesTab>{
-  int _newCalories = 200;
+  int _caloriesToAdd = 200;
   int _totalCalories;
-  int _leftCalories;
+  int _remainingCalories;
   int _calorieTarget;
   CalorieModel _calorieModel = CalorieModel();
+
 
   @override
   void initState(){
     super.initState();
-    _calorieTarget = 1600;
+    _calorieTarget = Constants.DEFAULT_CALORIE_TARGET;
     _totalCalories =  0;
-    _leftCalories = _calorieTarget;
+    _remainingCalories = _calorieTarget;
   }
 
-  // Checks to see if prev calories were saved today so we can disoplay correct total / remaining
+ 
   void _checkTodaysCalories(BuildContext context) async {
-
     
-    // obtain shared preferences
-    final prefs = await SharedPreferences.getInstance();
-    final int calorieTarget = prefs.getInt('calorie_target') ?? 1600;
-
-    _calorieTarget = calorieTarget;
-    
-    // Check with DB to see if we have data for today.
     final historicCalories = Provider.of<List<CalorieData>>(context, listen: false);
 
-    // Only do this if we have data
+    // Check date of last list item, if historic calories has items.
+    // Set _totalCalories and _remainingCalories to display correct amount
+    // if calories for today already exist.
     if(historicCalories != null && historicCalories.length > 0){
-      final latest = historicCalories[historicCalories.length - 1];
-      final today = TimeConvert().getFormattedString();
-      // We want to display the current calorie count for today if it exists in the DB.
+      final CalorieData latest = historicCalories[historicCalories.length - 1];
+      final String today = TimeConvert().getFormattedString();
+      
       if(latest.time == today){
         setState(() {
           _totalCalories = latest.calories;
-          _leftCalories = _calorieTarget - _totalCalories;
+          _remainingCalories = _calorieTarget - latest.calories;
         });
       }  
     }
@@ -61,32 +56,32 @@ class _CaloriesTabState extends State<CaloriesTab>{
     if(historicCalories != null && historicCalories.length == 0){
       setState(() {
         _totalCalories = 0;
-        _leftCalories = _calorieTarget;
+        _remainingCalories = _calorieTarget;
       });
     }
   }
 
   void _onAddCalories(){
-    if(_newCalories + 100 <= Constants.MAX_CALORIES){
+    if(_caloriesToAdd + 100 <= Constants.MAX_CALORIES){
       setState(() {
-        _newCalories = _newCalories + 100;
+        _caloriesToAdd = _caloriesToAdd + 100;
       });
     }
   }
 
   void _onSubtractCalories(){
-    if(_newCalories >= 100){
+    if(_caloriesToAdd >= 100){
       setState(() {
-        _newCalories -= 100;
+        _caloriesToAdd -= 100;
       });
     }
   }
 
   void _onSubmitCalories(){
-    if(_newCalories >= 0){
+    if(_caloriesToAdd >= 0){
       setState(() {
-        _totalCalories += _newCalories;
-        _leftCalories -= _newCalories;
+        _totalCalories += _caloriesToAdd;
+        _remainingCalories -= _caloriesToAdd;
       });
       // adds to the db and triggers stream to refire
       _calorieModel.addTodaysCalorie(_totalCalories);
@@ -102,14 +97,22 @@ class _CaloriesTabState extends State<CaloriesTab>{
   @override
   Widget build(BuildContext context){
 
-    _checkTodaysCalories(context);
+    final CalorieTarget calorieTarget = Provider.of<CalorieTarget>(context);
 
+    if(calorieTarget != null && calorieTarget.calories != _calorieTarget){
+      setState(() {
+        _calorieTarget = calorieTarget.calories;
+      });
+    }
+
+    _checkTodaysCalories(context);
+    
      // Configure gradient settings for Dark and Light Modes
     final Brightness brightness = MediaQuery.platformBrightnessOf(context);
 
     final List<Color> gradient = brightness == Brightness.dark ? Styles.darkGradient : Styles.lightGradient;
 
-    final Color containerColor = brightness == Brightness.dark ? Color.fromRGBO(0, 0, 0, 0.7) : Color.fromRGBO(255, 255, 255, 0.7);
+    final Color containerColor = brightness == Brightness.dark ? Styles.darkContainer : Styles.lightContainer;
   
     return Container(
       decoration: BoxDecoration(  
@@ -146,7 +149,7 @@ class _CaloriesTabState extends State<CaloriesTab>{
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: <Widget>[
                               describedCalories(description: 'Total Calories: ', calories: _totalCalories, max: _calorieTarget),
-                              describedCalories(description: 'Remaining: ', calories: _leftCalories, max: _calorieTarget)
+                              describedCalories(description: 'Remaining: ', calories: _remainingCalories, max: _calorieTarget)
                             ],
                           )
                         ),
@@ -161,7 +164,7 @@ class _CaloriesTabState extends State<CaloriesTab>{
                               Padding(
                                 padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 10.0),
                                 child: Text(
-                                  '$_newCalories', 
+                                  '$_caloriesToAdd', 
                                   style: Styles.biggerText,
                                 )
                               ),

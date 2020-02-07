@@ -33,14 +33,37 @@ class StatsInfoChart extends StatelessWidget{
           weightTarget = Constants.DEFAULT_GOAL_WEIGHT;
         }
 
-        final String overallWeightLossText = weightInfo.overallWeightLoss > 0 ? "+" + weightInfo.overallWeightLoss.toStringAsFixed(1) : weightInfo.overallWeightLoss.toStringAsFixed(1);
-        final Color overallWeightLossColor = weightInfo.overallWeightLoss > 0 ? CupertinoColors.destructiveRed : CupertinoColors.activeBlue;
+        // Only display "0" if its zero, not "0.0"
+        final String overallWeightLossCheckZero = weightInfo.overallWeightLoss == 0 ?
+          weightInfo.overallWeightLoss.toStringAsFixed(0) : weightInfo.overallWeightLoss.toStringAsFixed(1);
 
-        final String averageWeightLossPerWeekText = weightInfo.averageWeightLossPerWeek > 0 ? "+" + weightInfo.averageWeightLossPerWeek.toStringAsFixed(1) : weightInfo.averageWeightLossPerWeek.toStringAsFixed(1);
-        final Color avgWeightLossPerWeekColor = weightInfo.averageWeightLossPerWeek > 0 ? CupertinoColors.destructiveRed : CupertinoColors.activeBlue;
+        // Add "+" in front of number if greater than  zero.
+        final String overallWeightLossText = weightInfo.overallWeightLoss > 0 ? 
+          "+" + overallWeightLossCheckZero : overallWeightLossCheckZero;
 
-        final Color weekendCaloriesColor = calorieInfo.weekendAverage > calorieTarget ? CupertinoColors.destructiveRed : CupertinoColors.activeBlue;
-        final Color weekdayCalorieColor = calorieInfo.weekdayAverage > calorieTarget ? CupertinoColors.destructiveRed : CupertinoColors.activeBlue;
+        // Make number red if above zero, blue otherwise
+        final Color overallWeightLossColor = weightInfo.overallWeightLoss > 0 ? 
+          CupertinoColors.destructiveRed : CupertinoColors.activeBlue;
+
+        // Only display "0" if its zero, not "0.0"
+        final String averageWeightLossCheckZero = weightInfo.averageWeightLossPerWeek == 0 ?
+          weightInfo.averageWeightLossPerWeek.toStringAsFixed(0) : weightInfo.averageWeightLossPerWeek.toStringAsFixed(1);
+
+        // Add "+" in front of number if greater than  zero.
+        final String averageWeightLossPerWeekText = weightInfo.averageWeightLossPerWeek > 0 ? 
+          "+" + averageWeightLossCheckZero : averageWeightLossCheckZero;
+
+        // Make number red if above zero, blue otherwise
+        final Color avgWeightLossPerWeekColor = weightInfo.averageWeightLossPerWeek > 0 ? 
+          CupertinoColors.destructiveRed : CupertinoColors.activeBlue;
+
+        // Make number red if above calorie target, blue otherwise
+        final Color weekendCaloriesColor = calorieInfo.weekendAverage > calorieTarget ? 
+          CupertinoColors.destructiveRed : CupertinoColors.activeBlue;
+
+        // Make number red if above calorie target, blue otherwise
+        final Color weekdayCalorieColor = calorieInfo.weekdayAverage > calorieTarget ? 
+          CupertinoColors.destructiveRed : CupertinoColors.activeBlue;
 
         // Configure gradient settings for Dark and Light Modes
         final Brightness brightness = MediaQuery.platformBrightnessOf(context);
@@ -54,7 +77,7 @@ class StatsInfoChart extends StatelessWidget{
         // to line up the 2nd items in the row in a straight column.
         // There is probably a better way to do this but this was the most straight forward.
         return Container(
-          padding: EdgeInsets.only(top: 20, bottom: 90, left: 20, right: 20),
+          padding: EdgeInsets.only(top: 20, bottom: 90, left: 20, right: 0),
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topLeft,

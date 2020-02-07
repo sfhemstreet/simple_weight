@@ -5,6 +5,11 @@ import 'package:simple_weight/database/calorie_data.dart';
 import 'package:simple_weight/models/calorie_model.dart';
 import 'package:simple_weight/models/weight_model.dart';
 import 'package:simple_weight/simple_weight.dart';
+import 'package:simple_weight/styles/styles.dart';
+import 'package:simple_weight/utils/constants.dart';
+
+import 'models/calorie_target_model.dart';
+import 'models/weight_target_model.dart';
 
 void main() => runApp(MyApp());
 
@@ -18,8 +23,8 @@ class MyApp extends StatelessWidget{
         StreamProvider<List<WeightData>>( 
           create:(_) => WeightModel().weightStream,
           catchError: (context, obj){
-            debugPrint('Stream Provider error - weight');
-            debugPrint(obj);
+            print('Stream Provider error - weight');
+            print(obj);
             return List<WeightData>();
           },
         ),
@@ -27,9 +32,29 @@ class MyApp extends StatelessWidget{
         StreamProvider<List<CalorieData>>( 
           create:(_) => CalorieModel().calorieStream,
           catchError: (context, obj){
-            debugPrint('Stream Provider error - calories');
-            debugPrint(obj);
+            print('Stream Provider error - calories');
+            print(obj);
             return List<CalorieData>();
+          },
+        ),
+        // Streams the current set Calorie Target 
+        StreamProvider<CalorieTarget>(
+          create:(_) => CalorieTargetModel().calorieTargetStream,
+          initialData: new CalorieTarget(Constants.DEFAULT_CALORIE_TARGET),
+          catchError: (context, obj){
+            print('Stream Provider error - calorie target');
+            print(obj);
+            return new CalorieTarget(Constants.DEFAULT_CALORIE_TARGET);
+          },
+        ),
+        // Streams the current set Goal Weight 
+        StreamProvider<WeightTarget>(
+          create:(_) => WeightTargetModel().weightTargetStream,
+          initialData: new WeightTarget(Constants.DEFAULT_GOAL_WEIGHT),
+          catchError: (context, obj){
+            print('Stream Provider error - weight target');
+            print(obj);
+            return new WeightTarget(Constants.DEFAULT_GOAL_WEIGHT);
           },
         ),
       ],
@@ -60,7 +85,7 @@ class MyApp extends StatelessWidget{
               CupertinoColors.white : CupertinoColors.black;
 
             final Color barBackgroundColor = brightness == Brightness.dark ?
-              Color.fromRGBO(43, 43, 43, 0.7) : Color.fromRGBO(225, 238, 253, 0.7);
+              Styles.darkBarBackground : Styles.lightBarBackground;
 
             final Color scaffoldBackgroundColor = brightness == Brightness.dark ? 
               CupertinoColors.black : CupertinoColors.white;
@@ -88,6 +113,7 @@ class MyApp extends StatelessWidget{
               child: DefaultTextStyle.merge(
                 style: TextStyle(
                   color: textColor,
+                  fontSize: 18,
                 ), 
                 child: child,
               ),

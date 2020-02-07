@@ -22,8 +22,20 @@ abstract class Styles {
 
   static const TextStyle descriptor = TextStyle(
     color: CupertinoColors.inactiveGray, 
-    fontSize: 13
+    fontSize: 14,
   );
+
+  static const Color lightBarBackground = Color.fromRGBO(225, 238, 253, 0.7);
+
+  static const Color darkBarBackground = Color.fromRGBO(43, 43, 43, 0.7);
+
+  static const Color darkContainer = Color.fromRGBO(0, 0, 0, 0.6);
+  
+  static const Color lightContainer = Color.fromRGBO(255, 255, 255, 0.6);
+
+  static const Color darkContainerOpaque = Color.fromRGBO(0, 0, 0, 0.4);
+
+  static const Color lightContainerOpaque = Color.fromRGBO(255, 255, 255, 0.4);
 
   static const List<Color> darkGradient = <Color>[
       CupertinoColors.black,

@@ -1,7 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:simple_weight/models/calorie_model.dart';
+import 'package:simple_weight/models/calorie_target_model.dart';
 import 'package:simple_weight/models/weight_model.dart';
+import 'package:simple_weight/models/weight_target_model.dart';
 import 'package:simple_weight/styles/styles.dart';
+import 'package:simple_weight/utils/constants.dart';
 
 class DeleteDataPopUp extends StatelessWidget{
 
@@ -39,6 +42,8 @@ class DeleteDataPopUp extends StatelessWidget{
                       onPressed: (){
                         _weightModel.deleteAllWeights();
                         _calorieModel.deleteAllCalories();
+                        CalorieTargetModel().updateTarget(Constants.DEFAULT_CALORIE_TARGET);
+                        WeightTargetModel().updateTarget(Constants.DEFAULT_GOAL_WEIGHT);
                         // Two Pops to close both menus
                         Navigator.of(context).pop();
                         Navigator.of(context).pop();

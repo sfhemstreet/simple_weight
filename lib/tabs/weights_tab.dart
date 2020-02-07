@@ -19,6 +19,7 @@ class _WeightsTabState extends State<WeightsTab> {
   
   num _weight = 0;
   
+  final FocusNode _focusNode = FocusNode();
   final TextEditingController _weightController = new TextEditingController();
   final WeightModel _weightModel = new WeightModel();
 
@@ -42,8 +43,9 @@ class _WeightsTabState extends State<WeightsTab> {
     if(_weight >= Constants.MIN_WEIGHT && _weight <= Constants.MAX_WEIGHT){
       // Make sure _weight has only one decimal space (ie 165.3) 
       final num parsedWeight = num.parse(_weight.toStringAsFixed(1));
-      // Add weight to model so entire app knows the new weight
+      
       _weightModel.addTodaysWeight(parsedWeight);
+      _focusNode.unfocus();
       _weightController.clear();
       
       setState(() {
@@ -59,6 +61,13 @@ class _WeightsTabState extends State<WeightsTab> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _focusNode.dispose();
+    _weightController.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
 
     // Configure gradient settings for Dark and Light Modes
@@ -66,7 +75,7 @@ class _WeightsTabState extends State<WeightsTab> {
 
     final List<Color> gradient = brightness == Brightness.dark ? Styles.darkGradient : Styles.lightGradient;
 
-    final Color containerColor = brightness == Brightness.dark ? Color.fromRGBO(0, 0, 0, 0.7) : Color.fromRGBO(255, 255, 255, 0.7);
+    final Color containerColor = brightness == Brightness.dark ? Styles.darkContainer : Styles.lightContainer;
 
     return Container(
       decoration: BoxDecoration(  
@@ -134,6 +143,7 @@ class _WeightsTabState extends State<WeightsTab> {
                             child: Icon(ScaleIcon.weight, color: CupertinoColors.inactiveGray,),
                           ),
                           placeholder: "Enter Weight",
+                          focusNode: _focusNode,
                           autocorrect: false,
                           keyboardType: TextInputType.numberWithOptions(decimal: true),
                           textInputAction: TextInputAction.done,

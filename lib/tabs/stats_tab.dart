@@ -1,8 +1,10 @@
+import 'dart:math' as math;
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_weight/database/calorie_data.dart';
 import 'package:simple_weight/database/weight_data.dart';
 import 'package:simple_weight/settings/settings_page.dart';
+import 'package:simple_weight/styles/styles.dart';
 import 'package:simple_weight/widgets/selected_graph_data.dart';
 import 'package:simple_weight/widgets/stats_info_chart.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
@@ -62,10 +64,21 @@ class _StatsTabState extends State<StatsTab>{
     // Holds Graph, Selected Data, and StatsInfoChart, or loading bar, or "No data" text
     List<Widget> _children = List<Widget>();
 
+    // Configure gradient settings for Dark and Light Modes
+    final Brightness brightness = MediaQuery.platformBrightnessOf(context);
+
+    final List<Color> gradient = brightness == Brightness.dark ? Styles.darkGradient : Styles.lightGradient;
+
     // Still getting data show loading sign
     if(_calories == null || _weights == null){
       _children.add(
-        Padding( 
+        Container( 
+          decoration: BoxDecoration(  
+            gradient: RadialGradient(
+              colors: gradient,
+              focalRadius: 0,
+            ),
+          ),
           padding: EdgeInsets.all(8),
           child: Center(
             child: SizedBox( 
@@ -79,10 +92,22 @@ class _StatsTabState extends State<StatsTab>{
     // Data comes up empty, show Text 
     else if(_calories.length == 0 || _weights.length == 0){
       _children.add(
-        Center(
-          child: Padding( 
-            padding: EdgeInsets.only(top: 200),
-            child: Text("Add Calorie and Weight Data!"),
+        Container(
+          padding: EdgeInsets.only(
+            top: 250,
+            bottom: 250,
+          ),
+          decoration: BoxDecoration(  
+            gradient: SweepGradient(
+              colors: gradient,
+              tileMode: TileMode.repeated,
+              endAngle: math.pi * 0.01,
+            ),
+          ),
+          child: Center(
+            child: Center(
+              child: Text("Add Calorie and Weight Data!", style: Styles.biggerText,),
+            ),
           ),
         )
       );

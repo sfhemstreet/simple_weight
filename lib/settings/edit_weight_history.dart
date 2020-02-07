@@ -225,19 +225,33 @@ class _EditWeightHistoryState extends State<EditWeightHistory> {
       }
     }
 
-    return CustomScrollView(
-      slivers: <Widget>[
-        CupertinoSliverNavigationBar(
-          largeTitle: Text('Edit Weight History'),
-          heroTag: "Edit Weights",
+    // Configure gradient settings for Dark and Light Modes
+    final Brightness brightness = MediaQuery.platformBrightnessOf(context);
+
+    final List<Color> gradient = brightness == Brightness.dark ? Styles.darkGradient : Styles.lightGradient;
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.bottomRight,
+          end: Alignment.topRight,
+          colors: gradient,
         ),
-        SliverPadding(
-          padding: EdgeInsets.only(top: 15),
-          sliver: SliverList( 
-            delegate: SliverChildListDelegate(_children),
+      ),
+      child: CustomScrollView(
+        slivers: <Widget>[
+          CupertinoSliverNavigationBar(
+            largeTitle: Text('Edit Weight History'),
+            heroTag: "Edit Weights",
           ),
-        ),
-      ],
+          SliverPadding(
+            padding: EdgeInsets.only(top: 15),
+            sliver: SliverList( 
+              delegate: SliverChildListDelegate(_children),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

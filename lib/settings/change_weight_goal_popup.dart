@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 import 'package:simple_weight/icons/scale_icon.dart';
+import 'package:simple_weight/models/weight_target_model.dart';
 import 'package:simple_weight/utils/constants.dart';
 
 class ChangeGoalWeightPopUp extends StatefulWidget{
@@ -12,6 +13,7 @@ class _ChangeGoalWeightPopUpState extends State<ChangeGoalWeightPopUp>{
 
   int _weight = 0;
 
+
   Widget build(BuildContext context){
 
     final screenHeight = MediaQuery.of(context).size.height;
@@ -21,8 +23,14 @@ class _ChangeGoalWeightPopUpState extends State<ChangeGoalWeightPopUp>{
       bottomPadding = 230;
     }
 
+    final WeightTarget currentWeightTarget = Provider.of<WeightTarget>(context);
+
+    String weightTargetText = currentWeightTarget == null ? 
+      Constants.DEFAULT_GOAL_WEIGHT.toString() : currentWeightTarget.weight.toString();
+
     return CupertinoActionSheet(
       title: Text("Set Goal Weight"),
+      message: Text("Current goal weight is $weightTargetText"),
       actions: <Widget>[
         Padding(
           padding: EdgeInsets.only(bottom: bottomPadding),
@@ -61,25 +69,23 @@ class _ChangeGoalWeightPopUpState extends State<ChangeGoalWeightPopUp>{
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
+
                   CupertinoButton(
                     child: Text('Cancel') ,
                     onPressed: () => Navigator.of(context).pop(),
                   ),
+
                   CupertinoButton(
                     child: Text('Submit Goal Weight') ,
                     onPressed: () async {
                       
                       if(_weight >= Constants.MIN_WEIGHT_TARGET && _weight <= Constants.MAX_WEIGHT){
-                        // obtain shared preferences
-                        final prefs = await SharedPreferences.getInstance();
-
-                        // set goal weight value
-                        prefs.setInt('weight_target', _weight);
-
+                        WeightTargetModel().updateTarget(_weight);
                         Navigator.of(context).pop();
                       }
                     },
                   ),
+                  
                 ],
               ),
             ],

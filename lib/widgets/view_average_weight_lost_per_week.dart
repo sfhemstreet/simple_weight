@@ -38,8 +38,9 @@ class ViewAverageWeeklyWeightLoss extends StatelessWidget {
     }
 
     final num avgLoss = runningSum / numOfWeeks;
+    final String avgLossText = avgLoss == 0 ? avgLoss.toString() : avgLoss.toStringAsFixed(1);
     
-    final String text = avgLoss > 0 ? "+" + avgLoss.toStringAsFixed(1) : avgLoss.toStringAsFixed(1);
+    final String text = avgLoss > 0 ? "+" + avgLossText : avgLossText;
     final Color color = avgLoss <= 0 ? CupertinoColors.activeBlue : CupertinoColors.destructiveRed;
 
     return Text(text, style: TextStyle(color: color));

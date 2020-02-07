@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
 import 'package:simple_weight/icons/silverware_icon.dart';
+import 'package:simple_weight/models/calorie_target_model.dart';
 import 'package:simple_weight/utils/constants.dart';
 
 class ChangeDailyCalorieTargetPopUp extends StatefulWidget{
@@ -21,8 +22,14 @@ class _ChangeDailyCalorieTargetPopUpState extends State<ChangeDailyCalorieTarget
       bottomPadding = 230;
     }
 
+    final CalorieTarget currentCalorieTarget = Provider.of<CalorieTarget>(context);
+
+    String calorieTargetText = currentCalorieTarget == null ? 
+      Constants.DEFAULT_CALORIE_TARGET.toString() : currentCalorieTarget.calories.toString();
+
     return CupertinoActionSheet(
       title: Text("Set Daily Calorie Target"),
+      message: Text("Current calorie target is $calorieTargetText"),
       actions: <Widget>[
         Padding(
           padding: EdgeInsets.only(bottom: bottomPadding),
@@ -69,11 +76,8 @@ class _ChangeDailyCalorieTargetPopUpState extends State<ChangeDailyCalorieTarget
                     child: Text('Submit Calorie Target') ,
                     onPressed: () async {
                       if(_calories >= Constants.MIN_CALORIE_TARGET && _calories <= Constants.MAX_CALORIES){
-                        // obtain shared preferences
-                        final prefs = await SharedPreferences.getInstance();
-
                         // set goal weight value
-                        prefs.setInt('calorie_target', _calories);
+                        CalorieTargetModel().updateTarget(_calories);
 
                         Navigator.of(context).pop();
                       }

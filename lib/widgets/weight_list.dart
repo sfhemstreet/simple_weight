@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_weight/database/weight_data.dart';
+import 'package:simple_weight/styles/styles.dart';
 import 'package:simple_weight/utils/time_convert.dart';
 
 /// Renders a sliver list of all weights in Database
@@ -22,10 +23,10 @@ class WeightList extends StatelessWidget {
 
     if(allWeightData.length == 0){
       return SliverPadding(
-        padding: const EdgeInsets.only(top: 100),
+        padding: const EdgeInsets.only(top: 150),
         sliver: SliverToBoxAdapter(
           child: Center( 
-            child: Text("Keep Track of Weight!"),
+            child: Text("Keep Track of Weight!", style: Styles.biggerText,),
           ),
         ),
       );
@@ -58,7 +59,7 @@ class WeightList extends StatelessWidget {
             // Configure gradient settings for Dark and Light Modes
             final Brightness brightness = MediaQuery.platformBrightnessOf(context);
 
-            final Color containerColor = brightness == Brightness.dark ? Color.fromRGBO(0, 0, 0, 0.5) : Color.fromRGBO(255, 255, 255, 0.5);
+            final Color containerColor = brightness == Brightness.dark ? Styles.darkContainerOpaque : Styles.lightContainerOpaque;
             
 
             return Container(

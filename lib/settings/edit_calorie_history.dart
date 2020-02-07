@@ -103,7 +103,7 @@ class _EditCalorieHistoryState extends State<EditCalorieHistory> {
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text("Missed a day? No problem!"),
+            Text("Forgot to record a meal? No problem!"),
             Text("Add or edit calories for past dates here."),
           ],
         ),
@@ -148,7 +148,7 @@ class _EditCalorieHistoryState extends State<EditCalorieHistory> {
                         // and options to cancel or select the date.
                         CupertinoActionSheet(
                           title: Text(tempCalories == null ? 
-                            "No calories were recorded on this date" : "Recorded calorie intake on this date was " + tempCalories.toString()
+                            "No calories were recorded on this date" : "Calories recorded on this date were " + tempCalories.toString()
                           ),
                           actions: <Widget>[
                             CupertinoActionSheetAction(
@@ -191,7 +191,7 @@ class _EditCalorieHistoryState extends State<EditCalorieHistory> {
                 Padding(
                   padding: EdgeInsets.only(bottom: _hasPrevCalories ? 10 : 0),
                   child: Text(_hasPrevCalories ? 
-                    "Previously recorded calories were " + _selectedDateData.calories.toString() : ""
+                    "Previously recorded calories: " + _selectedDateData.calories.toString() : ""
                   ),
                 ),
                 Padding(  
@@ -211,7 +211,7 @@ class _EditCalorieHistoryState extends State<EditCalorieHistory> {
                   ), 
                 ),
                 CupertinoButton.filled(
-                  child: Text('Submit Weight', style: Styles.buttonTextStyle) ,
+                  child: Text('Submit Calories', style: Styles.buttonTextStyle) ,
                   onPressed: () => _onSubmitCalories(context),
                   padding: EdgeInsets.symmetric(vertical: 8, horizontal: 50),
                   minSize: 20,
@@ -223,19 +223,33 @@ class _EditCalorieHistoryState extends State<EditCalorieHistory> {
       }
     }
 
-    return CustomScrollView(
-      slivers: <Widget>[
-        CupertinoSliverNavigationBar(
-          largeTitle: Text('Edit Calorie History'),
-          heroTag: "Edit Calorie History",
+    // Configure gradient settings for Dark and Light Modes
+    final Brightness brightness = MediaQuery.platformBrightnessOf(context);
+
+    final List<Color> gradient = brightness == Brightness.dark ? Styles.darkGradient : Styles.lightGradient;
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.bottomRight,
+          end: Alignment.topRight,
+          colors: gradient,
         ),
-        SliverPadding(
-          padding: EdgeInsets.only(top: 15),
-          sliver: SliverList( 
-            delegate: SliverChildListDelegate(_children),
+      ),
+      child: CustomScrollView(
+        slivers: <Widget>[
+          CupertinoSliverNavigationBar(
+            largeTitle: Text('Edit Calorie History'),
+            heroTag: "Edit Calorie History",
           ),
-        ),
-      ],
+          SliverPadding(
+            padding: EdgeInsets.only(top: 15),
+            sliver: SliverList( 
+              delegate: SliverChildListDelegate(_children),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -6,7 +6,10 @@ import 'package:simple_weight/styles/styles.dart';
 import 'package:simple_weight/utils/constants.dart';
 import 'package:simple_weight/utils/time_convert.dart';
 import 'package:simple_weight/icons/silverware_icon.dart';
+import 'package:simple_weight/widgets/simple_weight_date_picker.dart';
 
+
+/// Page for editting or adding past daily calorie totals
 class EditCalorieHistory extends StatefulWidget{
   @override 
   _EditCalorieHistoryState createState() => _EditCalorieHistoryState();
@@ -34,8 +37,9 @@ class _EditCalorieHistoryState extends State<EditCalorieHistory> {
   void _onSubmitCalories(BuildContext context) async {
     if(_calorieInput != null && _calorieInput >= 0 && _calorieInput <= Constants.MAX_CALORIES){
 
-      // Display popup alert if new weight is overriding prevWeight.
+      // Display popup alert if new calorie input is overriding prevously recorded one.
       if(_hasPrevCalories){
+        // Check if user wants to override prevous record 
         bool willOverride = await showCupertinoDialog<bool>(
           context: context,
           builder: (BuildContext context){
@@ -61,9 +65,7 @@ class _EditCalorieHistoryState extends State<EditCalorieHistory> {
         }
       }
 
-      // Make sure weight has only one decimal space (ie 165.3) 
       _selectedDateData.calories = _calorieInput;
-      // Add weight to model so entire app knows the enw weight
       _calorieModel.insertCalories(_selectedDateData);
       
       // makes submit button go away
@@ -83,6 +85,7 @@ class _EditCalorieHistoryState extends State<EditCalorieHistory> {
     // List to be added to SliverChildListDelegate
     List<Widget> _children = List<Widget>();
 
+    // Only show loading widget if calorie data is not in yet.
     if(_calories == null){
       _children.add(
         Padding(
@@ -95,10 +98,14 @@ class _EditCalorieHistoryState extends State<EditCalorieHistory> {
     }
     else{
 
+      // Place all data into Map, so Calendar Popup can display
+      // prevoulsy recorded calories, or if no calories were recorded
+      // for any selected day.
       for(CalorieData c in _calories){
         calorieMap[c.time] = c.calories;
       }
 
+      // Page explaination 
       _children.add(
         Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -109,10 +116,13 @@ class _EditCalorieHistoryState extends State<EditCalorieHistory> {
         ),
       );
         
+      // Select Date Button And Calender Popup 
       _children.add(
         CupertinoButton( 
           child: Text("Select A Date", style: Styles.biggerText,),
           onPressed: () async {
+            // Returns the selected date and any calorie data prevously record
+            // at that date. If no date was selected this will be null.
             final CalorieData dateData = await showCupertinoDialog<CalorieData>(
               context: context,
               builder: (BuildContext context){
@@ -120,35 +130,22 @@ class _EditCalorieHistoryState extends State<EditCalorieHistory> {
                 String tempDate = TimeConvert().getFormattedString();
                 num tempCalories = calorieMap[tempDate];
 
-                // check to change timePicker to dark mode look
-                Brightness brightness = MediaQuery.platformBrightnessOf(context);
-
                 return StatefulBuilder(
                   builder: (BuildContext context, StateSetter setState){
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         // Displays a DatePicker for user to select date 
-                        SizedBox(
-                          height: 200,
-                          child: CupertinoDatePicker(
-                            backgroundColor: brightness == Brightness.dark ? CupertinoColors.black : CupertinoColors.white,
-                            mode: CupertinoDatePickerMode.date,
-                            initialDateTime: DateTime.now(),
-                            minimumDate: DateTime(2020,1,1),
-                            maximumDate: DateTime.now(),
-                            // SetsState on tempWeight to display the recorded weight at the tempDate. 
-                            onDateTimeChanged: (DateTime date){
-                              tempDate = TimeConvert().dateTimeToFormattedString(date);
-                              setState(() => tempCalories = calorieMap[tempDate]);
-                            },
-                          ),
+                        SimpleWeightDatePicker((DateTime date){
+                            tempDate = TimeConvert().dateTimeToFormattedString(date);
+                            setState(() => tempCalories = calorieMap[tempDate]);
+                          },
                         ),
                         // Displays Action sheet showing if date selected already has weight 
                         // and options to cancel or select the date.
                         CupertinoActionSheet(
                           title: Text(tempCalories == null ? 
-                            "No calories were recorded on this date" : "Calories recorded on this date were " + tempCalories.toString()
+                            "No calories were recorded on this date" : "Calories recorded on this date: " + tempCalories.toString(),
                           ),
                           actions: <Widget>[
                             CupertinoActionSheetAction(
@@ -167,6 +164,8 @@ class _EditCalorieHistoryState extends State<EditCalorieHistory> {
                 ); 
               }
             );
+            // If user selected a date, store it, also sets _hasPrevCalories 
+            // so we can show popup warning later
             if(dateData != null){
               setState((){
                 _selectedDateData = dateData;
@@ -176,7 +175,9 @@ class _EditCalorieHistoryState extends State<EditCalorieHistory> {
           },
         ),
       );
-    
+
+
+      // adds Input for calories and submit button, only shows after user has selected a date.
       if(_selectedDateData != null){
         _children.add(
           Padding(
@@ -228,27 +229,29 @@ class _EditCalorieHistoryState extends State<EditCalorieHistory> {
 
     final List<Color> gradient = brightness == Brightness.dark ? Styles.darkGradient : Styles.lightGradient;
 
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.bottomRight,
-          end: Alignment.topRight,
-          colors: gradient,
+    return CupertinoPageScaffold(
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.bottomRight,
+            end: Alignment.topRight,
+            colors: gradient,
+          ),
         ),
-      ),
-      child: CustomScrollView(
-        slivers: <Widget>[
-          CupertinoSliverNavigationBar(
-            largeTitle: Text('Edit Calorie History'),
-            heroTag: "Edit Calorie History",
-          ),
-          SliverPadding(
-            padding: EdgeInsets.only(top: 15),
-            sliver: SliverList( 
-              delegate: SliverChildListDelegate(_children),
+        child: CustomScrollView(
+          slivers: <Widget>[
+            CupertinoSliverNavigationBar(
+              largeTitle: Text('Edit Calorie History'),
+              heroTag: "Edit Calorie History",
             ),
-          ),
-        ],
+            SliverPadding(
+              padding: EdgeInsets.only(top: 15),
+              sliver: SliverList( 
+                delegate: SliverChildListDelegate(_children),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

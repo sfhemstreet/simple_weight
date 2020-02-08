@@ -55,7 +55,7 @@ class _WeightsTabState extends State<WeightsTab> {
   }
 
   void _pushSettings(BuildContext context){
-    Navigator.push(context, CupertinoPageRoute(
+    Navigator.of(context, rootNavigator: true).push(CupertinoPageRoute<void>(
       builder: (context) => SettingsPage(),
     ));
   }

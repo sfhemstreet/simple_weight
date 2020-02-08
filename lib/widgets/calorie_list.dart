@@ -6,6 +6,7 @@ import 'package:simple_weight/utils/time_convert.dart';
 
 /// Renders a sliver list of all calories in Database
 class CalorieList extends StatelessWidget {
+
   @override
   Widget build(BuildContext context){
     final List<CalorieData> allCalorieData = Provider.of<List<CalorieData>>(context);

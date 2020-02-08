@@ -48,7 +48,7 @@ class _StatsTabState extends State<StatsTab>{
   }
 
   void _pushSettings(BuildContext context){
-    Navigator.push(context, CupertinoPageRoute(
+    Navigator.of(context, rootNavigator: true).push(CupertinoPageRoute<void>(
       builder: (BuildContext context) => SettingsPage(),
     ));
   }
@@ -68,6 +68,7 @@ class _StatsTabState extends State<StatsTab>{
     final Brightness brightness = MediaQuery.platformBrightnessOf(context);
 
     final List<Color> gradient = brightness == Brightness.dark ? Styles.darkGradient : Styles.lightGradient;
+    final List<Color> gradient2 = brightness == Brightness.dark ? Styles.darkBrightGradient : Styles.lightGradient;
 
     // Still getting data show loading sign
     if(_calories == null || _weights == null){
@@ -99,9 +100,10 @@ class _StatsTabState extends State<StatsTab>{
           ),
           decoration: BoxDecoration(  
             gradient: SweepGradient(
-              colors: gradient,
+              colors: gradient2,
               tileMode: TileMode.repeated,
-              endAngle: math.pi * 0.01,
+              //startAngle: 0.1,
+              endAngle: math.pi * 2,
             ),
           ),
           child: Center(

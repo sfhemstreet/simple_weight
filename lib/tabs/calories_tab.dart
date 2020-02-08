@@ -7,6 +7,7 @@ import 'package:simple_weight/styles/styles.dart';
 import 'package:simple_weight/settings/settings_page.dart';
 import 'package:simple_weight/utils/constants.dart';
 import 'package:simple_weight/utils/time_convert.dart';
+import 'package:simple_weight/widgets/animated_calorie_list.dart';
 import 'package:simple_weight/widgets/described_calories.dart';
 import 'package:simple_weight/widgets/calorie_list.dart';
 
@@ -22,7 +23,7 @@ class _CaloriesTabState extends State<CaloriesTab>{
   int _remainingCalories;
   int _calorieTarget;
   CalorieModel _calorieModel = CalorieModel();
-
+  bool _isInitOpen;
 
   @override
   void initState(){
@@ -30,6 +31,7 @@ class _CaloriesTabState extends State<CaloriesTab>{
     _calorieTarget = Constants.DEFAULT_CALORIE_TARGET;
     _totalCalories =  0;
     _remainingCalories = _calorieTarget;
+    _isInitOpen = true;
   }
 
  
@@ -89,7 +91,7 @@ class _CaloriesTabState extends State<CaloriesTab>{
   }
 
   void _pushSettings(BuildContext context){
-    Navigator.push(context, CupertinoPageRoute(
+    Navigator.of(context, rootNavigator: true).push(CupertinoPageRoute<void>(
       builder: (context) => SettingsPage(),
     ));
   }
@@ -103,9 +105,15 @@ class _CaloriesTabState extends State<CaloriesTab>{
       setState(() {
         _calorieTarget = calorieTarget.calories;
       });
+      _checkTodaysCalories(context);
     }
 
-    _checkTodaysCalories(context);
+    if(_isInitOpen){
+      setState(() {
+        _isInitOpen = false;
+      });
+      _checkTodaysCalories(context);
+    }
     
      // Configure gradient settings for Dark and Light Modes
     final Brightness brightness = MediaQuery.platformBrightnessOf(context);
@@ -197,3 +205,4 @@ class _CaloriesTabState extends State<CaloriesTab>{
     ); 
   }
 }
+

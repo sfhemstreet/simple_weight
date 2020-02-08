@@ -46,12 +46,12 @@ abstract class Styles {
       Color.fromRGBO(53, 22, 86, 0.5),
     ]; 
 
-  static const List<Color> darkerGradient = <Color>[
-      Color.fromRGBO(0, 17, 103, 0.1),
-      Color.fromRGBO(57, 0, 58, 0.01),
-      Color.fromRGBO(27, 51, 3, 0.01),
-      Color.fromRGBO(36, 4, 4, 0.01),
-      Color.fromRGBO(53, 22, 86, 0.02),
+  static const List<Color> darkBrightGradient = <Color>[
+      Color.fromRGBO(0, 17, 103, 0.7),
+      Color.fromRGBO(57, 0, 58, 0.7),
+      Color.fromRGBO(27, 51, 3, 0.7),
+      Color.fromRGBO(36, 4, 4, 0.7),
+      Color.fromRGBO(53, 22, 86, 0.7),
     ]; 
 
   static const List<Color> lightGradient = <Color>[

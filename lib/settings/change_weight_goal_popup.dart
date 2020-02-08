@@ -30,7 +30,7 @@ class _ChangeGoalWeightPopUpState extends State<ChangeGoalWeightPopUp>{
 
     return CupertinoActionSheet(
       title: Text("Set Goal Weight"),
-      message: Text("Current goal weight is $weightTargetText"),
+      message: Text("Current goal weight: $weightTargetText"),
       actions: <Widget>[
         Padding(
           padding: EdgeInsets.only(bottom: bottomPadding),

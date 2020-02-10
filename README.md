@@ -17,6 +17,9 @@ For state management the Provider package was super useful and easy, used it's M
 The chart used to visualize weight and calorie history is a TimeLinechart from the charts_flutter package.
 
 
+![](simpleweight_demo_gif.gif)
+
+
 ## Getting Started
 
 This utilizes Flutter, if you haven't used Flutter check out the  

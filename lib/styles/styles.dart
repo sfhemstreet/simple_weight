@@ -35,7 +35,7 @@ abstract class Styles {
 
   static const Color darkContainerOpaque = Color.fromRGBO(0, 0, 0, 0.4);
 
-  static const Color lightContainerOpaque = Color.fromRGBO(255, 255, 255, 0.4);
+  static const Color lightContainerOpaque = Color.fromRGBO(255, 255, 255, 0.3);
 
   static const List<Color> darkGradient = <Color>[
       CupertinoColors.black,
@@ -56,10 +56,10 @@ abstract class Styles {
 
   static const List<Color> lightGradient = <Color>[
       Color.fromRGBO(8, 96, 95, 0.2),
-      Color.fromRGBO(23, 126, 137, 0.1),
-      Color.fromRGBO(89, 131, 129, 0.1),
-      Color.fromRGBO(142, 107, 149, 0.1),
-      Color.fromRGBO(162, 173, 89, 0.3),
+      Color.fromRGBO(23, 126, 137, 0.17),
+      Color.fromRGBO(89, 131, 129, 0.17),
+      Color.fromRGBO(142, 107, 149, 0.17),
+      Color.fromRGBO(162, 173, 89, 0.2),
     ];
 
   

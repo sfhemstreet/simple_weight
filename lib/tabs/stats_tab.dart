@@ -23,8 +23,9 @@ class StatsTab extends StatefulWidget {
 class _StatsTabState extends State<StatsTab>{
   
   // These hold data of tapped area on graph (selection)
-  DateTime _selectedTime;
-  Map<String, num> _selectedMeasurements = Map<String, num>();
+  Widget _selectedDataWidget = SelectedGraphData(ValueKey(1));
+  ScrollController _scrollController = ScrollController();
+  bool _isVisible = false;
 
 
   void _onSelectionChanged(charts.SelectionModel model) {
@@ -41,9 +42,13 @@ class _StatsTabState extends State<StatsTab>{
       });
     }
 
+
     setState(() {
-      _selectedTime = time;
-      _selectedMeasurements = measurements;
+      _selectedDataWidget = SelectedGraphData(
+        ValueKey(DateTime.now().millisecondsSinceEpoch),
+        time: time, 
+        measurements: measurements,
+      );
     });
   }
 
@@ -152,7 +157,8 @@ class _StatsTabState extends State<StatsTab>{
       
       // Display graph, graph must be given size by parent
       _children.add(
-        SizedBox( 
+        Container( 
+          color: brightness == Brightness.dark ? CupertinoColors.black : CupertinoColors.white,
           height: 470.0,
           //width: 300,
           child: charts.TimeSeriesChart(
@@ -197,9 +203,22 @@ class _StatsTabState extends State<StatsTab>{
       // SelectedGraphData 
       // Displays row of data from tapped point on graph
       _children.add(
-        SelectedGraphData(
-          time: _selectedTime, 
-          measurements: _selectedMeasurements
+        Container(
+          child: AnimatedSwitcher(
+            duration: Duration(milliseconds: 500),
+            switchInCurve: Curves.easeInOut,
+            switchOutCurve: Curves.ease,
+            child: _selectedDataWidget,
+            //transitionBuilder: (Widget child, Animation<double> animation) => ScaleTransition(scale: animation, child: child),
+          ),
+          decoration: BoxDecoration(
+            border: Border(
+              bottom: BorderSide(
+                color: CupertinoColors.separator,
+              ),
+            ),
+            color: brightness == Brightness.dark ? CupertinoColors.black : CupertinoColors.white,
+          ),
         ),
       );
 
@@ -210,26 +229,58 @@ class _StatsTabState extends State<StatsTab>{
       // StatsInfoChart
       // Displays general weight and calorie stats 
       _children.add( 
-        StatsInfoChart(weightAnalysis, calorieAnalysis),
+        AnimatedOpacity(
+          opacity: _isVisible ? 1 : 0, 
+          duration: Duration(milliseconds: 1050),
+          curve: Curves.easeInOut,
+          child: StatsInfoChart(weightAnalysis, calorieAnalysis),
+        ),
       );
     }
+
+    _scrollController.addListener((){
+      //print(_scrollController.offset);
+      if(_scrollController.offset > 80){
+        setState(() {
+          _isVisible = true;
+        });
+      }
+      else {
+        setState(() {
+          _isVisible = false;
+        });
+      }
+      
+
+    });
     
-    return CustomScrollView(
-      slivers: <Widget>[
-        CupertinoSliverNavigationBar(
-          largeTitle: Text('Stats'),
-          trailing: CupertinoButton(
-            onPressed: () => _pushSettings(context),
-            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
-            minSize: 20,
-            child: Icon(CupertinoIcons.settings),
+    
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: gradient,
+        ),
+      ),
+      child: CustomScrollView(
+        controller: _scrollController,
+        slivers: <Widget>[
+          CupertinoSliverNavigationBar(
+            largeTitle: Text('Stats'),
+            trailing: CupertinoButton(
+              onPressed: () => _pushSettings(context),
+              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+              minSize: 20,
+              child: Icon(CupertinoIcons.settings),
+            ),
+            heroTag: "Stats Tab",
           ),
-          heroTag: "Stats Tab",
-        ),
-        SliverList( 
-          delegate: SliverChildListDelegate(_children),
-        ),
-      ],
+          SliverList( 
+            delegate: SliverChildListDelegate(_children),
+          ),
+        ],
+      ),
     );
   }
 }

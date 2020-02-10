@@ -138,8 +138,12 @@ class _EditWeightHistoryState extends State<EditWeightHistory> {
                         // Displays Action sheet showing if date selected already has weight 
                         // and options to cancel or select the date.
                         CupertinoActionSheet(
-                          title: Text(tempWeight == null ? 
-                            "No weight was recorded on this date" : "Weight recorded on this date: " + tempWeight.toString()
+                          title: AnimatedSwitcher(
+                            duration: Duration(milliseconds: 200),
+                            child: Text(tempWeight == null ? 
+                              "No weight was recorded on this date" : "Weight recorded on this date: " + tempWeight.toString(),
+                              key: ValueKey(tempWeight == null ? 1 : DateTime.now().millisecondsSinceEpoch),
+                            ),
                           ),
                           actions: <Widget>[
                             CupertinoActionSheetAction(

@@ -8,7 +8,7 @@ class SelectedGraphData extends StatelessWidget {
   final DateTime time;
   final Map<String, num> measurements;
 
-  SelectedGraphData({this.time, this.measurements});
+  SelectedGraphData(Key key,{this.time, this.measurements}) : super(key: key);
 
   @override 
   Widget build(BuildContext context){

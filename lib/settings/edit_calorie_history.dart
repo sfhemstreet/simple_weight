@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:simple_weight/database/calorie_data.dart';
 import 'package:simple_weight/models/calorie_model.dart';
@@ -22,6 +23,7 @@ class _EditCalorieHistoryState extends State<EditCalorieHistory> {
   CalorieData _selectedDateData;
   bool _hasPrevCalories = false;
   int _calorieInput;
+  bool _hasUpdated = false;
 
   void _onEditCalories(String text){
     // Input will always be text, parse to num if possible
@@ -72,6 +74,7 @@ class _EditCalorieHistoryState extends State<EditCalorieHistory> {
       setState(() {
         _selectedDateData = null;
         _calorieInput = null;
+        _hasUpdated = true;
       });
     }
   }
@@ -121,6 +124,10 @@ class _EditCalorieHistoryState extends State<EditCalorieHistory> {
         CupertinoButton( 
           child: Text("Select A Date", style: Styles.biggerText,),
           onPressed: () async {
+            // get rid of checkmark 
+            setState(() {
+              _hasUpdated = false;
+            });
             // Returns the selected date and any calorie data prevously record
             // at that date. If no date was selected this will be null.
             final CalorieData dateData = await showCupertinoDialog<CalorieData>(
@@ -144,8 +151,19 @@ class _EditCalorieHistoryState extends State<EditCalorieHistory> {
                         // Displays Action sheet showing if date selected already has weight 
                         // and options to cancel or select the date.
                         CupertinoActionSheet(
-                          title: Text(tempCalories == null ? 
-                            "No calories were recorded on this date" : "Calories recorded on this date: " + tempCalories.toString(),
+                          title: AnimatedSwitcher(
+                            duration: Duration(milliseconds: 200),
+                            child: tempCalories == null ? 
+                              Text("No calories were recorded on this date") 
+                              : 
+                              Row(
+                                key: ValueKey(DateTime.now().millisecondsSinceEpoch),
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text("Calories recorded on this date: "),
+                                  Text(tempCalories.toString(), style: TextStyle(color: CupertinoColors.darkBackgroundGray),),
+                                ],
+                              ),
                           ),
                           actions: <Widget>[
                             CupertinoActionSheetAction(
@@ -175,7 +193,6 @@ class _EditCalorieHistoryState extends State<EditCalorieHistory> {
           },
         ),
       );
-
 
       // adds Input for calories and submit button, only shows after user has selected a date.
       if(_selectedDateData != null){
@@ -222,6 +239,21 @@ class _EditCalorieHistoryState extends State<EditCalorieHistory> {
           ),
         );
       }
+
+      
+      _children.add(
+        AnimatedOpacity( 
+          duration: Duration(milliseconds: 600),
+          opacity: _hasUpdated ? 1 : 0,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 90.0),
+            child: Center(
+              child: Icon(CupertinoIcons.check_mark_circled_solid, size: 30, color: CupertinoColors.activeGreen,),
+            ),
+          ),
+        ),
+      );
+      
     }
 
     // Configure gradient settings for Dark and Light Modes

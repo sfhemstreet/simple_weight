@@ -43,7 +43,7 @@ class StatsInfoChart extends StatelessWidget{
 
         // Make number red if above zero, blue otherwise
         final Color overallWeightLossColor = weightInfo.overallWeightLoss > 0 ? 
-          CupertinoColors.destructiveRed : CupertinoColors.activeBlue;
+          CupertinoColors.destructiveRed : CupertinoColors.activeGreen;
 
         // Only display "0" if its zero, not "0.0"
         final String averageWeightLossCheckZero = weightInfo.averageWeightLossPerWeek == 0 ?
@@ -55,15 +55,15 @@ class StatsInfoChart extends StatelessWidget{
 
         // Make number red if above zero, blue otherwise
         final Color avgWeightLossPerWeekColor = weightInfo.averageWeightLossPerWeek > 0 ? 
-          CupertinoColors.destructiveRed : CupertinoColors.activeBlue;
+          CupertinoColors.destructiveRed : CupertinoColors.activeGreen;
 
         // Make number red if above calorie target, blue otherwise
         final Color weekendCaloriesColor = calorieInfo.weekendAverage > calorieTarget ? 
-          CupertinoColors.destructiveRed : CupertinoColors.activeBlue;
+          CupertinoColors.destructiveRed : CupertinoColors.activeGreen;
 
         // Make number red if above calorie target, blue otherwise
         final Color weekdayCalorieColor = calorieInfo.weekdayAverage > calorieTarget ? 
-          CupertinoColors.destructiveRed : CupertinoColors.activeBlue;
+          CupertinoColors.destructiveRed : CupertinoColors.activeGreen;
 
         // Configure gradient settings for Dark and Light Modes
         final Brightness brightness = MediaQuery.platformBrightnessOf(context);
@@ -78,26 +78,14 @@ class StatsInfoChart extends StatelessWidget{
         // There is probably a better way to do this but this was the most straight forward.
         return Container(
           padding: EdgeInsets.only(top: 20, bottom: 90, left: 20, right: 0),
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: gradient,
-            ),
-            border: Border(
-              top: BorderSide(
-                color: CupertinoColors.separator,
-              ),
-            ),
-          ),
           child: Center(
             child: Column(
               children: <Widget>[
                 Container(
-                  margin: EdgeInsets.all(15),
-                  padding: EdgeInsets.all(15),
+                  margin: EdgeInsets.only(top: 15, bottom: 15, left: 15, right: 0),
+                  padding: EdgeInsets.only(top: 15, bottom: 15, left: 15, right: 0),
                   decoration: BoxDecoration(
-                    borderRadius: new BorderRadius.all(new Radius.circular(20.0)),
+                    borderRadius: BorderRadius.all(Radius.circular(20.0)),
                     color: containerColor,
                   ),
                   child: Column(
@@ -175,8 +163,8 @@ class StatsInfoChart extends StatelessWidget{
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.all(15),
-                  padding: EdgeInsets.all(15),
+                  margin: EdgeInsets.only(top: 15, bottom: 15, left: 15, right: 0),
+                  padding: EdgeInsets.only(top: 15, bottom: 15, left: 15, right: 0),
                   decoration: BoxDecoration(
                     borderRadius: new BorderRadius.all(new Radius.circular(20.0)),
                     color: containerColor,

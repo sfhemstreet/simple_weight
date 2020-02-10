@@ -79,7 +79,11 @@ class _WeightsTabState extends State<WeightsTab> {
 
     return Container(
       decoration: BoxDecoration(  
-        gradient: LinearGradient(colors: gradient),
+        gradient: LinearGradient(
+          colors: gradient,
+          begin: Alignment.bottomRight,
+          end: Alignment.topLeft,
+        ),
       ),
       child: CustomScrollView(
         slivers: <Widget>[

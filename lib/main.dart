@@ -7,6 +7,7 @@ import 'package:simple_weight/models/weight_model.dart';
 import 'package:simple_weight/simple_weight.dart';
 import 'package:simple_weight/styles/styles.dart';
 import 'package:simple_weight/utils/constants.dart';
+import 'package:simple_weight/widgets/restart_widget.dart';
 
 import 'models/calorie_target_model.dart';
 import 'models/weight_target_model.dart';
@@ -66,61 +67,68 @@ class MyApp extends StatelessWidget{
             currentFocus.unfocus();
           }
         },
-        child: CupertinoApp(
-          title: 'Simple Weight',
-          debugShowCheckedModeBanner: false,
-          home: SimpleWeight(),
-          builder: (BuildContext context, Widget child){
+        // Restart widget allows us to sert new key into CupertinoApp, restarting entire widget tree.
+        // This is used only when user deletes all their data, so we don't have side effects from left over state.
+        child: RestartWidget(
+          child: CupertinoApp(
+            title: 'Simple Weight',
+            debugShowCheckedModeBanner: false,
+            home: SimpleWeight(),
+            builder: (BuildContext context, Widget child){
 
-            // Configure theme color settings for Dark and Light Modes
-            final Brightness brightness = MediaQuery.platformBrightnessOf(context);
+              // Configure theme color settings for Dark and Light Modes
+              final Brightness brightness = MediaQuery.platformBrightnessOf(context);
 
-            final Color textColor = brightness == Brightness.dark ?
-              CupertinoColors.white : CupertinoColors.black;
+              final Color textColor = brightness == Brightness.dark ?
+                CupertinoColors.white : CupertinoColors.black;
 
-            final Color primaryColor = brightness == Brightness.dark ? 
-              CupertinoColors.activeBlue : CupertinoColors.activeBlue;
+              final Color primaryColor = brightness == Brightness.dark ? 
+                CupertinoColors.activeBlue : CupertinoColors.activeBlue;
 
-            final Color primaryContrastingColor = brightness == Brightness.dark ? 
-              CupertinoColors.white : CupertinoColors.black;
+              final Color primaryContrastingColor = brightness == Brightness.dark ? 
+                CupertinoColors.white : CupertinoColors.black;
 
-            final Color barBackgroundColor = brightness == Brightness.dark ?
-              Styles.darkBarBackground : Styles.lightBarBackground;
+              final Color barBackgroundColor = brightness == Brightness.dark ?
+                Styles.darkBarBackground : Styles.lightBarBackground;
 
-            final Color scaffoldBackgroundColor = brightness == Brightness.dark ? 
-              CupertinoColors.black : CupertinoColors.white;
+              final Color scaffoldBackgroundColor = brightness == Brightness.dark ? 
+                CupertinoColors.black : CupertinoColors.white;
 
-            return CupertinoTheme(
-              data: CupertinoThemeData(
-                brightness: brightness,
-                primaryColor: primaryColor,
-                primaryContrastingColor: primaryContrastingColor,
-                barBackgroundColor: barBackgroundColor,
-                scaffoldBackgroundColor: scaffoldBackgroundColor,
-                textTheme: CupertinoTextThemeData(  
+              return CupertinoTheme(
+                data: CupertinoThemeData(
+                  brightness: brightness,
                   primaryColor: primaryColor,
-                  textStyle: TextStyle(
-                    color: primaryContrastingColor,
-                  ),
-                  navActionTextStyle: TextStyle(
-                    color: primaryContrastingColor,
-                  ),
-                  actionTextStyle: TextStyle(
-                    color: primaryContrastingColor,
+                  primaryContrastingColor: primaryContrastingColor,
+                  barBackgroundColor: barBackgroundColor,
+                  scaffoldBackgroundColor: scaffoldBackgroundColor,
+                  textTheme: CupertinoTextThemeData(  
+                    primaryColor: primaryColor,
+                    textStyle: TextStyle(
+                      color: primaryContrastingColor,
+                    ),
+                    navActionTextStyle: TextStyle(
+                      color: primaryContrastingColor,
+                    ),
+                    actionTextStyle: TextStyle(
+                      color: primaryContrastingColor,
+                    ),
                   ),
                 ),
-              ),
-              child: DefaultTextStyle.merge(
-                style: TextStyle(
-                  color: textColor,
-                  fontSize: 18,
-                ), 
-                child: child,
-              ),
-            );
-          }
+                child: DefaultTextStyle.merge(
+                  style: TextStyle(
+                    color: textColor,
+                    fontSize: 18,
+                  ), 
+                  child: child,
+                ),
+              );
+            }
+          ),
         ),
       ),
     );
   }
 }
+
+
+

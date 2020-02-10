@@ -20,6 +20,7 @@ class _EditWeightHistoryState extends State<EditWeightHistory> {
   WeightData _selectedDateData;
   bool _hasPrevWeight = false;
   num _weightInput;
+  bool _hasUpdated = false;
 
   void _onEditWeight(String text){
     // Input will always be text, parse to num if possible
@@ -71,6 +72,7 @@ class _EditWeightHistoryState extends State<EditWeightHistory> {
       setState(() {
         _selectedDateData = null;
         _weightInput = null;
+        _hasUpdated = true;
       });
     }
   }
@@ -83,6 +85,11 @@ class _EditWeightHistoryState extends State<EditWeightHistory> {
 
     // List to be added to SliverChildListDelegate
     List<Widget> _children = List<Widget>();
+
+     // Configure gradient settings for Dark and Light Modes
+    final Brightness brightness = MediaQuery.platformBrightnessOf(context);
+
+    final List<Color> gradient = brightness == Brightness.dark ? Styles.darkGradient : Styles.lightGradient;
 
 
     // _weights can be null, only show when its not null
@@ -116,6 +123,11 @@ class _EditWeightHistoryState extends State<EditWeightHistory> {
         CupertinoButton( 
           child: Text("Select A Date", style: Styles.biggerText,),
           onPressed: () async {
+            setState(() {
+              _hasUpdated = false;
+            });
+
+            
             final WeightData dateData = await showCupertinoDialog<WeightData>(
               context: context,
               builder: (BuildContext context){
@@ -140,10 +152,20 @@ class _EditWeightHistoryState extends State<EditWeightHistory> {
                         CupertinoActionSheet(
                           title: AnimatedSwitcher(
                             duration: Duration(milliseconds: 200),
-                            child: Text(tempWeight == null ? 
-                              "No weight was recorded on this date" : "Weight recorded on this date: " + tempWeight.toString(),
-                              key: ValueKey(tempWeight == null ? 1 : DateTime.now().millisecondsSinceEpoch),
-                            ),
+                            child: tempWeight == null ? 
+                              Text("No weight was recorded on this date")
+                              : 
+                              Row(
+                                key: ValueKey(DateTime.now().millisecondsSinceEpoch),
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text("Weight recorded on this date: "),
+                                  Text(
+                                    tempWeight.toString(), 
+                                    style: TextStyle(color: brightness == Brightness.dark ? CupertinoColors.white : CupertinoColors.darkBackgroundGray),
+                                  ),
+                                ],
+                              ),
                           ),
                           actions: <Widget>[
                             CupertinoActionSheetAction(
@@ -216,12 +238,20 @@ class _EditWeightHistoryState extends State<EditWeightHistory> {
           ),
         );
       }
+
+      _children.add(
+        AnimatedOpacity( 
+          duration: Duration(milliseconds: 1000),
+          opacity: _hasUpdated ? 1 : 0,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 90.0),
+            child: Center(
+              child: Icon(CupertinoIcons.check_mark_circled_solid, size: 30, color: CupertinoColors.activeGreen,),
+            ),
+          ),
+        ),
+      );
     }
-
-    // Configure gradient settings for Dark and Light Modes
-    final Brightness brightness = MediaQuery.platformBrightnessOf(context);
-
-    final List<Color> gradient = brightness == Brightness.dark ? Styles.darkGradient : Styles.lightGradient;
 
     return CupertinoPageScaffold(
       child: Container(

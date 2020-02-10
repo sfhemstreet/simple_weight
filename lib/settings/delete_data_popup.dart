@@ -16,8 +16,8 @@ class DeleteDataPopUp extends StatelessWidget{
 
   Widget build(BuildContext context){
     return CupertinoActionSheet(
-      title: Text("Delete Simple Weight Data", style: Styles.biggerText.copyWith(color: CupertinoColors.black),),
-      message: Text("Warning, data deletion is permanent.", style: TextStyle(color: CupertinoColors.black)),
+      title: Text("Delete Simple Weight Data", style: Styles.biggerText,),
+      message: Text("Warning, data deletion is permanent."),
       actions: <Widget>[
         // Delete All Data
         CupertinoActionSheetAction(

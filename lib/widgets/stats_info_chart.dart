@@ -67,8 +67,6 @@ class StatsInfoChart extends StatelessWidget{
 
         // Configure gradient settings for Dark and Light Modes
         final Brightness brightness = MediaQuery.platformBrightnessOf(context);
-
-        final List<Color> gradient = brightness == Brightness.dark ? Styles.darkGradient : Styles.lightGradient;
           
         final Color containerColor = brightness == Brightness.dark ? 
           Color.fromRGBO(0, 0, 0, 0) : Color.fromRGBO(255, 255, 255, 0.0);

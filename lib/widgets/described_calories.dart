@@ -12,13 +12,15 @@ class DescribedCalories extends StatelessWidget{
 
     final Color color = calories > max || calories < 0 ? CupertinoColors.destructiveRed : CupertinoColors.activeBlue;
 
-    return RichText(
-      text: TextSpan(
-        children: [
-          TextSpan(text: description, style: Styles.descriptor),
-          TextSpan(text: '$calories', style: TextStyle(color: color),),
-        ],
-      ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(description, style: Styles.descriptor),
+        AnimatedSwitcher(
+          duration: Duration(milliseconds: 150),
+          child: Text('$calories', style: TextStyle(color: color), key: ValueKey(calories)),
+        ),
+      ],
     );  
   }
 }

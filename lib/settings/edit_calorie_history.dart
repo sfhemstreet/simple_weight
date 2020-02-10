@@ -88,6 +88,11 @@ class _EditCalorieHistoryState extends State<EditCalorieHistory> {
     // List to be added to SliverChildListDelegate
     List<Widget> _children = List<Widget>();
 
+    // Configure gradient settings for Dark and Light Modes
+    final Brightness brightness = MediaQuery.platformBrightnessOf(context);
+
+    final List<Color> gradient = brightness == Brightness.dark ? Styles.darkGradient : Styles.lightGradient;
+
     // Only show loading widget if calorie data is not in yet.
     if(_calories == null){
       _children.add(
@@ -100,6 +105,8 @@ class _EditCalorieHistoryState extends State<EditCalorieHistory> {
       );
     }
     else{
+
+      
 
       // Place all data into Map, so Calendar Popup can display
       // prevoulsy recorded calories, or if no calories were recorded
@@ -124,7 +131,7 @@ class _EditCalorieHistoryState extends State<EditCalorieHistory> {
         CupertinoButton( 
           child: Text("Select A Date", style: Styles.biggerText,),
           onPressed: () async {
-            // get rid of checkmark 
+            // get rid of checkmark if already submitted prev calories
             setState(() {
               _hasUpdated = false;
             });
@@ -161,7 +168,10 @@ class _EditCalorieHistoryState extends State<EditCalorieHistory> {
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: <Widget>[
                                   Text("Calories recorded on this date: "),
-                                  Text(tempCalories.toString(), style: TextStyle(color: CupertinoColors.darkBackgroundGray),),
+                                  Text(
+                                    tempCalories.toString(), 
+                                    style: TextStyle(color: brightness == Brightness.dark ? CupertinoColors.white : CupertinoColors.darkBackgroundGray),
+                                  ),
                                 ],
                               ),
                           ),
@@ -243,7 +253,7 @@ class _EditCalorieHistoryState extends State<EditCalorieHistory> {
       
       _children.add(
         AnimatedOpacity( 
-          duration: Duration(milliseconds: 600),
+          duration: Duration(milliseconds: 1000),
           opacity: _hasUpdated ? 1 : 0,
           child: Padding(
             padding: const EdgeInsets.only(top: 90.0),
@@ -255,11 +265,6 @@ class _EditCalorieHistoryState extends State<EditCalorieHistory> {
       );
       
     }
-
-    // Configure gradient settings for Dark and Light Modes
-    final Brightness brightness = MediaQuery.platformBrightnessOf(context);
-
-    final List<Color> gradient = brightness == Brightness.dark ? Styles.darkGradient : Styles.lightGradient;
 
     return CupertinoPageScaffold(
       child: Container(

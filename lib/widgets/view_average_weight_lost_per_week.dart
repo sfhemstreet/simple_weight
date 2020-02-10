@@ -43,6 +43,9 @@ class ViewAverageWeeklyWeightLoss extends StatelessWidget {
     final String text = avgLoss > 0 ? "+" + avgLossText : avgLossText;
     final Color color = avgLoss <= 0 ? CupertinoColors.activeBlue : CupertinoColors.destructiveRed;
 
-    return Text(text, style: TextStyle(color: color));
+    return AnimatedSwitcher(
+      duration: Duration(milliseconds: 250),
+      child: Text(text, style: TextStyle(color: color), key: ValueKey(avgLoss)),
+    );
   }
 }

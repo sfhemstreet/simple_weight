@@ -55,7 +55,7 @@ class _WeightsTabState extends State<WeightsTab> {
   }
 
   void _pushSettings(BuildContext context){
-    Navigator.push(context, CupertinoPageRoute(
+    Navigator.of(context, rootNavigator: true).push(CupertinoPageRoute<void>(
       builder: (context) => SettingsPage(),
     ));
   }
@@ -79,7 +79,11 @@ class _WeightsTabState extends State<WeightsTab> {
 
     return Container(
       decoration: BoxDecoration(  
-        gradient: LinearGradient(colors: gradient),
+        gradient: LinearGradient(
+          colors: gradient,
+          begin: Alignment.bottomRight,
+          end: Alignment.topLeft,
+        ),
       ),
       child: CustomScrollView(
         slivers: <Widget>[

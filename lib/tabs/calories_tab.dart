@@ -7,8 +7,10 @@ import 'package:simple_weight/styles/styles.dart';
 import 'package:simple_weight/settings/settings_page.dart';
 import 'package:simple_weight/utils/constants.dart';
 import 'package:simple_weight/utils/time_convert.dart';
+//import 'package:simple_weight/widgets/animated_calorie_list.dart';
 import 'package:simple_weight/widgets/described_calories.dart';
-import 'package:simple_weight/widgets/calorie_list.dart';
+//import 'package:simple_weight/widgets/calorie_list.dart';
+import 'package:simple_weight/widgets/editable_calorie_list.dart';
 
 class CaloriesTab extends StatefulWidget{
   CaloriesTab({Key key}):super(key: key); 
@@ -23,20 +25,18 @@ class _CaloriesTabState extends State<CaloriesTab>{
   int _calorieTarget;
   CalorieModel _calorieModel = CalorieModel();
 
-
   @override
   void initState(){
     super.initState();
     _calorieTarget = Constants.DEFAULT_CALORIE_TARGET;
     _totalCalories =  0;
     _remainingCalories = _calorieTarget;
+    
   }
 
  
-  void _checkTodaysCalories(BuildContext context) async {
+  void _checkTodaysCalories(BuildContext context, List<CalorieData> historicCalories) async {
     
-    final historicCalories = Provider.of<List<CalorieData>>(context, listen: false);
-
     // Check date of last list item, if historic calories has items.
     // Set _totalCalories and _remainingCalories to display correct amount
     // if calories for today already exist.
@@ -89,7 +89,7 @@ class _CaloriesTabState extends State<CaloriesTab>{
   }
 
   void _pushSettings(BuildContext context){
-    Navigator.push(context, CupertinoPageRoute(
+    Navigator.of(context, rootNavigator: true).push(CupertinoPageRoute<void>(
       builder: (context) => SettingsPage(),
     ));
   }
@@ -98,6 +98,7 @@ class _CaloriesTabState extends State<CaloriesTab>{
   Widget build(BuildContext context){
 
     final CalorieTarget calorieTarget = Provider.of<CalorieTarget>(context);
+    final historicCalories = Provider.of<List<CalorieData>>(context);
 
     if(calorieTarget != null && calorieTarget.calories != _calorieTarget){
       setState(() {
@@ -105,7 +106,8 @@ class _CaloriesTabState extends State<CaloriesTab>{
       });
     }
 
-    _checkTodaysCalories(context);
+    _checkTodaysCalories(context, historicCalories);
+    
     
      // Configure gradient settings for Dark and Light Modes
     final Brightness brightness = MediaQuery.platformBrightnessOf(context);
@@ -148,8 +150,24 @@ class _CaloriesTabState extends State<CaloriesTab>{
                           child: Row(  
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: <Widget>[
-                              describedCalories(description: 'Total Calories: ', calories: _totalCalories, max: _calorieTarget),
-                              describedCalories(description: 'Remaining: ', calories: _remainingCalories, max: _calorieTarget)
+                              AnimatedSwitcher( 
+                                duration: Duration(milliseconds: 250),
+                                child: DescribedCalories(
+                                  key: ValueKey(_totalCalories),
+                                  description: 'Total Calories: ', 
+                                  calories: _totalCalories, 
+                                  max: _calorieTarget
+                                ),
+                              ),
+                              AnimatedSwitcher(
+                                duration: Duration(milliseconds: 250),
+                                child: DescribedCalories(
+                                  key: ValueKey(_remainingCalories), 
+                                  description: 'Remaining: ', 
+                                  calories: _remainingCalories, 
+                                  max: _calorieTarget
+                                ),
+                              ),
                             ],
                           )
                         ),
@@ -163,10 +181,16 @@ class _CaloriesTabState extends State<CaloriesTab>{
                               ),
                               Padding(
                                 padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 10.0),
-                                child: Text(
-                                  '$_caloriesToAdd', 
-                                  style: Styles.biggerText,
-                                )
+                                child: AnimatedSwitcher(
+                                  duration: Duration(milliseconds: 150),
+                                  child: Text(
+                                    '$_caloriesToAdd', 
+                                    style: Styles.biggerText,
+                                    key: ValueKey(_caloriesToAdd)
+                                  ),
+                                  transitionBuilder: (Widget child, Animation<double> animation) => 
+                                    ScaleTransition(scale: animation, child: child),
+                                ),
                               ),
                               CupertinoButton(
                                 onPressed: _onAddCalories,
@@ -191,9 +215,10 @@ class _CaloriesTabState extends State<CaloriesTab>{
               ),
             ),
           ),
-          CalorieList(),
+          EditableCalorieList(),
         ],
       ),
     ); 
   }
 }
+

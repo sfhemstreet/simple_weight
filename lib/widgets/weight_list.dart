@@ -61,7 +61,6 @@ class WeightList extends StatelessWidget {
 
             final Color containerColor = brightness == Brightness.dark ? Styles.darkContainerOpaque : Styles.lightContainerOpaque;
             
-
             return Container(
               decoration: BoxDecoration(
                 color: containerColor,
@@ -82,11 +81,20 @@ class WeightList extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Text(item.weight.toString()),
-                      Text(timeText, style: TextStyle(color: CupertinoColors.inactiveGray),),
+                      AnimatedSwitcher(
+                        duration: Duration(milliseconds: 150),
+                        child: Text(item.weight.toString(), key: ValueKey(item.weight))
+                      ),
+                      AnimatedSwitcher(
+                        duration: Duration(milliseconds: 150),
+                        child: Text(timeText, style: TextStyle(color: CupertinoColors.inactiveGray), key: ValueKey(timeText)),
+                      ),
                     ],
                   ),
-                  Text(trailingText, style: TextStyle(color: color)),
+                  AnimatedSwitcher(
+                    duration: Duration(milliseconds: 150),
+                    child: Text(trailingText, style: TextStyle(color: color), key: ValueKey(trailingText)),
+                  ),
                 ],
               ),
             );

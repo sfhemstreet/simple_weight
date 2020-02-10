@@ -6,6 +6,7 @@ import 'package:simple_weight/styles/styles.dart';
 import 'package:simple_weight/utils/constants.dart';
 import 'package:simple_weight/utils/time_convert.dart';
 import 'package:simple_weight/icons/scale_icon.dart';
+import 'package:simple_weight/widgets/simple_weight_date_picker.dart';
 
 class EditWeightHistory extends StatefulWidget{
   @override 
@@ -122,35 +123,27 @@ class _EditWeightHistoryState extends State<EditWeightHistory> {
                 String tempDate = TimeConvert().getFormattedString();
                 num tempWeight = weightMap[tempDate];
 
-                // check to change timePicker to dark mode look
-                Brightness brightness = MediaQuery.platformBrightnessOf(context);
-
                 return StatefulBuilder(
                   builder: (BuildContext context, StateSetter setState){
                     return Column(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         // Displays a DatePicker for user to select date 
-                        SizedBox(
-                          height: 200,
-                          child: CupertinoDatePicker(
-                            backgroundColor: brightness == Brightness.dark ? CupertinoColors.black : CupertinoColors.white,
-                            mode: CupertinoDatePickerMode.date,
-                            initialDateTime: DateTime.now(),
-                            minimumDate: DateTime(2020,1,1),
-                            maximumDate: DateTime.now(),
-                            // SetsState on tempWeight to display the recorded weight at the tempDate. 
-                            onDateTimeChanged: (DateTime date){
-                              tempDate = TimeConvert().dateTimeToFormattedString(date);
-                              setState(() => tempWeight = weightMap[tempDate]);
-                            },
-                          ),
+                        SimpleWeightDatePicker(
+                          (DateTime date){
+                            tempDate = TimeConvert().dateTimeToFormattedString(date);
+                            setState(() => tempWeight = weightMap[tempDate]);
+                          },
                         ),
                         // Displays Action sheet showing if date selected already has weight 
                         // and options to cancel or select the date.
                         CupertinoActionSheet(
-                          title: Text(tempWeight == null ? 
-                            "No weight was recorded on this date" : "Recorded weight on this date was " + tempWeight.toString()
+                          title: AnimatedSwitcher(
+                            duration: Duration(milliseconds: 200),
+                            child: Text(tempWeight == null ? 
+                              "No weight was recorded on this date" : "Weight recorded on this date: " + tempWeight.toString(),
+                              key: ValueKey(tempWeight == null ? 1 : DateTime.now().millisecondsSinceEpoch),
+                            ),
                           ),
                           actions: <Widget>[
                             CupertinoActionSheetAction(
@@ -230,27 +223,29 @@ class _EditWeightHistoryState extends State<EditWeightHistory> {
 
     final List<Color> gradient = brightness == Brightness.dark ? Styles.darkGradient : Styles.lightGradient;
 
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.bottomRight,
-          end: Alignment.topRight,
-          colors: gradient,
+    return CupertinoPageScaffold(
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.bottomRight,
+            end: Alignment.topRight,
+            colors: gradient,
+          ),
         ),
-      ),
-      child: CustomScrollView(
-        slivers: <Widget>[
-          CupertinoSliverNavigationBar(
-            largeTitle: Text('Edit Weight History'),
-            heroTag: "Edit Weights",
-          ),
-          SliverPadding(
-            padding: EdgeInsets.only(top: 15),
-            sliver: SliverList( 
-              delegate: SliverChildListDelegate(_children),
+        child: CustomScrollView(
+          slivers: <Widget>[
+            CupertinoSliverNavigationBar(
+              largeTitle: Text('Edit Weight History'),
+              heroTag: "Edit Weights",
             ),
-          ),
-        ],
+            SliverPadding(
+              padding: EdgeInsets.only(top: 15),
+              sliver: SliverList( 
+                delegate: SliverChildListDelegate(_children),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

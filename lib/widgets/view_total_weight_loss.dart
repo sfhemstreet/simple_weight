@@ -22,6 +22,9 @@ class ViewTotalWeightLoss extends StatelessWidget {
     final String text = loss > 0 ? "+" + lossText : lossText;
     final Color color = loss <= 0 ? CupertinoColors.activeBlue : CupertinoColors.destructiveRed;
 
-    return Text(text, style: TextStyle(color: color));
+    return AnimatedSwitcher(
+      duration: Duration(milliseconds: 250),
+      child: Text(text, style: TextStyle(color: color), key: ValueKey(loss)),
+    );
   }
 }

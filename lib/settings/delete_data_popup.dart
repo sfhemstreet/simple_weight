@@ -5,6 +5,9 @@ import 'package:simple_weight/models/weight_model.dart';
 import 'package:simple_weight/models/weight_target_model.dart';
 import 'package:simple_weight/styles/styles.dart';
 import 'package:simple_weight/utils/constants.dart';
+import 'package:simple_weight/widgets/restart_widget.dart';
+
+
 
 class DeleteDataPopUp extends StatelessWidget{
 
@@ -13,17 +16,19 @@ class DeleteDataPopUp extends StatelessWidget{
 
   Widget build(BuildContext context){
     return CupertinoActionSheet(
-      title: Text("Delete Simple Weight Data", style: Styles.biggerText.copyWith(color: CupertinoColors.destructiveRed),),
-      message: Text("Warning, deleting data is irreversible and permanent.", style: TextStyle(color: CupertinoColors.destructiveRed)),
+      title: Text("Delete Simple Weight Data", style: Styles.biggerText.copyWith(color: CupertinoColors.black),),
+      message: Text("Warning, data deletion is permanent.", style: TextStyle(color: CupertinoColors.black)),
       actions: <Widget>[
         // Delete All Data
         CupertinoActionSheetAction(
+          isDestructiveAction: true,
+          child: Text("Delete All Data"),
           onPressed: (){
             showCupertinoDialog(
               context: context,
               builder: (BuildContext context){
                 return CupertinoAlertDialog(
-                  title: Text("Delete All Data", style: Styles.biggerText.copyWith(color: CupertinoColors.destructiveRed)),
+                  title: Text("Delete All Data",),
                   content: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text("Are you sure?"),
@@ -38,6 +43,7 @@ class DeleteDataPopUp extends StatelessWidget{
                       }
                     ),
                     CupertinoDialogAction(
+                      isDestructiveAction: true,
                       child: Text("Yes"),
                       onPressed: (){
                         _weightModel.deleteAllWeights();
@@ -47,6 +53,8 @@ class DeleteDataPopUp extends StatelessWidget{
                         // Two Pops to close both menus
                         Navigator.of(context).pop();
                         Navigator.of(context).pop();
+
+                        RestartWidget.restartApp(context);
                       },
                     ),
                   ],
@@ -54,7 +62,6 @@ class DeleteDataPopUp extends StatelessWidget{
               }
             );
           }, 
-          child: Text("Delete All Data")
         ),
       ],
       cancelButton: CupertinoActionSheetAction(

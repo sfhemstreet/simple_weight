@@ -29,7 +29,7 @@ class _ChangeDailyCalorieTargetPopUpState extends State<ChangeDailyCalorieTarget
 
     return CupertinoActionSheet(
       title: Text("Set Daily Calorie Target"),
-      message: Text("Current calorie target is $calorieTargetText"),
+      message: Text("Current calorie target: $calorieTargetText"),
       actions: <Widget>[
         Padding(
           padding: EdgeInsets.only(bottom: bottomPadding),

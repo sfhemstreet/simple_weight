@@ -53,91 +53,93 @@ class SettingsPage extends StatelessWidget{
 
     final List<Color> gradient = brightness == Brightness.dark ? Styles.darkGradient : Styles.lightGradient;
 
-    return Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.bottomLeft,
-          end: Alignment.topRight,
-          colors: gradient,
+    return CupertinoPageScaffold(
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.bottomLeft,
+            end: Alignment.topRight,
+            colors: gradient,
+          ),
         ),
-      ),
-      child: CustomScrollView(
-        slivers: <Widget>[
-          CupertinoSliverNavigationBar(
-            largeTitle: Text('Settings'),
-            heroTag: "Settings Page",
-          ),
-          SliverPadding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 0,
+        child: CustomScrollView(
+          slivers: <Widget>[
+            CupertinoSliverNavigationBar(
+              largeTitle: Text('Settings'),
+              heroTag: "Settings Page",
             ),
-            sliver: SliverList( 
-              delegate: SliverChildListDelegate([
+            SliverPadding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 0,
+              ),
+              sliver: SliverList( 
+                delegate: SliverChildListDelegate([
 
-                // Change Weight Goal Button
-                ListButton(
-                  onPressed: () => _pushChangeWeightGoal(context),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text("Change Goal Weight", style: DefaultTextStyle.of(context).style), 
-                      Icon(CupertinoIcons.bookmark),
-                    ],
+                  // Change Weight Goal Button
+                  ListButton(
+                    onPressed: () => _pushChangeWeightGoal(context),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text("Change Goal Weight", style: DefaultTextStyle.of(context).style), 
+                        Icon(CupertinoIcons.bookmark),
+                      ],
+                    ),
                   ),
-                ),
 
-                // Change Daily Calorie Target Button
-                ListButton(
-                  onPressed: () => _pushChangeDailyCalorieTarget(context),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text("Change Daily Calorie Target", style: DefaultTextStyle.of(context).style), 
-                      Icon(CupertinoIcons.bookmark),
-                    ],
+                  // Change Daily Calorie Target Button
+                  ListButton(
+                    onPressed: () => _pushChangeDailyCalorieTarget(context),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text("Change Daily Calorie Target", style: DefaultTextStyle.of(context).style), 
+                        Icon(CupertinoIcons.bookmark),
+                      ],
+                    ),
                   ),
-                ),
 
-                // Edit Weights Button
-                ListButton(
-                  onPressed: () => _pushEditWeights(context),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text("Edit Weight History", style: DefaultTextStyle.of(context).style), 
-                      Icon(CupertinoIcons.pencil),
-                    ],
+                  // Edit Weights Button
+                  ListButton(
+                    onPressed: () => _pushEditWeights(context),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text("Edit Weight History", style: DefaultTextStyle.of(context).style), 
+                        Icon(CupertinoIcons.pencil),
+                      ],
+                    ),
                   ),
-                ),
-                
-                // Edit Calories Button
-                ListButton(
-                  onPressed: () => _pushEditCalories(context),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text("Edit Calorie History", style: DefaultTextStyle.of(context).style), 
-                      Icon(CupertinoIcons.pencil),
-                    ],
+                  
+                  // Edit Calories Button
+                  ListButton(
+                    onPressed: () => _pushEditCalories(context),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text("Edit Calorie History", style: DefaultTextStyle.of(context).style), 
+                        Icon(CupertinoIcons.pencil),
+                      ],
+                    ),
                   ),
-                ),
 
-                // Delete Data Button
-                ListButton(
-                  onPressed: () => _pushDeleteData(context),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text("Delete Data", style: DefaultTextStyle.of(context).style), 
-                      Icon(CupertinoIcons.delete),
-                    ],
+                  // Delete Data Button
+                  ListButton(
+                    onPressed: () => _pushDeleteData(context),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: <Widget>[
+                        Text("Delete Data", style: DefaultTextStyle.of(context).style), 
+                        Icon(CupertinoIcons.delete),
+                      ],
+                    ),
                   ),
-                ),
 
-              ]),
+                ]),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -7,9 +7,7 @@ import 'package:simple_weight/styles/styles.dart';
 import 'package:simple_weight/settings/settings_page.dart';
 import 'package:simple_weight/utils/constants.dart';
 import 'package:simple_weight/utils/time_convert.dart';
-//import 'package:simple_weight/widgets/animated_calorie_list.dart';
 import 'package:simple_weight/widgets/described_calories.dart';
-//import 'package:simple_weight/widgets/calorie_list.dart';
 import 'package:simple_weight/widgets/editable_calorie_list.dart';
 
 class CaloriesTab extends StatefulWidget{
@@ -115,6 +113,7 @@ class _CaloriesTabState extends State<CaloriesTab>{
     final List<Color> gradient = brightness == Brightness.dark ? Styles.darkGradient : Styles.lightGradient;
 
     final Color containerColor = brightness == Brightness.dark ? Styles.darkContainer : Styles.lightContainer;
+
   
     return Container(
       decoration: BoxDecoration(  
@@ -130,7 +129,7 @@ class _CaloriesTabState extends State<CaloriesTab>{
             largeTitle: Text('Calories'),
             trailing: CupertinoButton(
               onPressed: () => _pushSettings(context),
-              padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+              padding: EdgeInsets.all(10),
               minSize: 20,
               child: Icon(CupertinoIcons.settings),
             ),
@@ -150,23 +149,15 @@ class _CaloriesTabState extends State<CaloriesTab>{
                           child: Row(  
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: <Widget>[
-                              AnimatedSwitcher( 
-                                duration: Duration(milliseconds: 250),
-                                child: DescribedCalories(
-                                  key: ValueKey(_totalCalories),
-                                  description: 'Total Calories: ', 
-                                  calories: _totalCalories, 
-                                  max: _calorieTarget
-                                ),
+                             DescribedCalories( 
+                                description: 'Total Calories: ', 
+                                calories: _totalCalories, 
+                                max: _calorieTarget
                               ),
-                              AnimatedSwitcher(
-                                duration: Duration(milliseconds: 250),
-                                child: DescribedCalories(
-                                  key: ValueKey(_remainingCalories), 
-                                  description: 'Remaining: ', 
-                                  calories: _remainingCalories, 
-                                  max: _calorieTarget
-                                ),
+                              DescribedCalories(
+                                description: 'Remaining: ', 
+                                calories: _remainingCalories, 
+                                max: _calorieTarget
                               ),
                             ],
                           )

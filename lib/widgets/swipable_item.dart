@@ -110,14 +110,15 @@ class _SwipableItemState extends State<SwipableItem> {
       }
 
       if(controller.offset > widget.items.length * 70.0){
-        controller.animateTo(widget.items.length * 60.0, duration: new Duration(milliseconds: 600), curve: Curves.decelerate);
+        scheduleMicrotask((){
+          controller.animateTo(widget.items.length * 60.0, duration: new Duration(milliseconds: 400), curve: Curves.decelerate);
+        });
       }
 
       if (notification is ScrollEndNotification) {
         if (notification.metrics.pixels >= (widget.items.length * 50.0)/2 
           && notification.metrics.pixels < widget.items.length * 50.0)
         {
-          
           scheduleMicrotask((){
             controller.animateTo(widget.items.length * 60.0,
               duration: new Duration(milliseconds: 600), curve: Curves.decelerate);

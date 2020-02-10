@@ -38,10 +38,16 @@ class EditableCalorieList extends StatelessWidget {
                   ),
                   Padding(
                     padding: EdgeInsets.symmetric(vertical: 0.0, horizontal: 10.0),
-                    child: Text(
-                      '$newCalories', 
-                      style: Styles.biggerText.copyWith(color: brightness == Brightness.dark ? CupertinoColors.white : CupertinoColors.black),
-                    )
+                    child: AnimatedSwitcher(
+                      duration: Duration(milliseconds: 150),
+                      child: Text(
+                        '$newCalories', 
+                        style: Styles.biggerText.copyWith(color: brightness == Brightness.dark ? CupertinoColors.white : CupertinoColors.darkBackgroundGray),
+                        key: ValueKey(newCalories),
+                      ),
+                      transitionBuilder: (Widget child, Animation<double> animation) => 
+                        ScaleTransition(scale: animation, child: child),
+                    ),
                   ),
                   CupertinoButton(
                     onPressed: (){
@@ -130,7 +136,7 @@ class EditableCalorieList extends StatelessWidget {
             final String timeText = TimeConvert().isStringToday(item.time) ? 
               "Today, ${item.time}" : "${item.dayOfWeek}, ${item.time}";
 
-            final Color bottomBorderColor = index + 1 == allCalorieData.length ? CupertinoColors.separator : Color.fromRGBO(0, 0, 0, 0); 
+            final Color bottomBorderColor = CupertinoColors.separator.withOpacity(0.1); 
 
             // Configure gradient settings for Dark and Light Modes
             final Brightness brightness = MediaQuery.platformBrightnessOf(context);
@@ -141,17 +147,21 @@ class EditableCalorieList extends StatelessWidget {
               backgroundColor: containerColor,
               items: <ActionItem>[
                 ActionItem(
-                  icon: Icon(CupertinoIcons.pencil),
+                  icon: CupertinoButton( 
+                    onPressed: () => _pushEditItem(context, item),
+                    child: Icon(CupertinoIcons.pencil),
+                  ),
                   onPress: () => _pushEditItem(context, item),
                   backgroudColor: Color.fromRGBO(0, 0, 0, 0),
-                )
+                ),
               ],
               child: Container(
+                margin: EdgeInsets.all(0),
                 decoration: BoxDecoration(
                   color: Color.fromRGBO(0, 0, 0, 0),
                   border: Border(
                     top: BorderSide(
-                      color: CupertinoColors.separator
+                      color: bottomBorderColor,
                     ),
                     bottom: BorderSide(
                       color: bottomBorderColor,

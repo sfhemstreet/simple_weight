@@ -52,6 +52,18 @@ class WeightModel {
     }
   }
 
+  void deleteWeight(WeightData weightData) async {
+    try{
+      await database.deleteWeight(weightData.time);
+    }
+    catch(error){
+      print(error);
+    }
+    finally{
+      _getWeights();
+    }
+  }
+
   void deleteAllWeights() async {
     try{
       await database.deleteAllWeights();

@@ -9,6 +9,31 @@ import 'package:simple_weight/widgets/swipable_item.dart';
 
 /// Renders a sliver list of all calories in Database
 class EditableCalorieList extends StatelessWidget {
+
+  void _pushDeleteItem(BuildContext context, CalorieData item) async {
+    await showCupertinoModalPopup<void>(
+      context: context, 
+      builder: (BuildContext context){
+        return CupertinoActionSheet( 
+          title: Text("Delete Calorie Data for ${item.time}"),
+          actions: <Widget>[
+            CupertinoActionSheetAction(
+              onPressed: (){
+                CalorieModel().deleteCalories(item);
+                Navigator.of(context).pop();
+              }, 
+              child: Text("Delete"),
+              isDestructiveAction: true,
+            ),
+          ],
+          cancelButton: CupertinoActionSheetAction(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('Cancel'),
+          ),
+        );   
+      }
+    );
+  }
   
 
   void _pushEditItem(BuildContext context, CalorieData item) async {
@@ -147,11 +172,13 @@ class EditableCalorieList extends StatelessWidget {
               backgroundColor: containerColor,
               items: <ActionItem>[
                 ActionItem(
-                  icon: CupertinoButton( 
-                    onPressed: () => _pushEditItem(context, item),
-                    child: Icon(CupertinoIcons.pencil),
-                  ),
+                  icon: Icon(CupertinoIcons.pencil),
                   onPress: () => _pushEditItem(context, item),
+                  backgroudColor: Color.fromRGBO(0, 0, 0, 0),
+                ),
+                ActionItem(
+                  icon: Icon(CupertinoIcons.delete_simple),
+                  onPress: () => _pushDeleteItem(context, item),
                   backgroudColor: Color.fromRGBO(0, 0, 0, 0),
                 ),
               ],

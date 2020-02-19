@@ -38,13 +38,25 @@ class CalorieModel {
     }
   }
 
-   void insertCalories(CalorieData calorieData) async {
+  void insertCalories(CalorieData calorieData) async {
     try{
       await database.insertCalories(calorieData);
     }
     catch(err){
       print('Error inserting new calories');
       print(err);
+    }
+    finally{
+      _getCalories();
+    }
+  }
+  
+  void deleteCalories(CalorieData calorieData) async {
+    try{
+      await database.deleteCalories(calorieData.time);
+    }
+    catch(error){
+      print(error);
     }
     finally{
       _getCalories();

@@ -17,7 +17,7 @@ class CaloriesTab extends StatefulWidget{
 }
 
 class _CaloriesTabState extends State<CaloriesTab>{
-  int _caloriesToAdd = 200;
+  int _caloriesToAdd = 0;
   int _totalCalories;
   int _remainingCalories;
   int _calorieTarget;
@@ -29,7 +29,6 @@ class _CaloriesTabState extends State<CaloriesTab>{
     _calorieTarget = Constants.DEFAULT_CALORIE_TARGET;
     _totalCalories =  0;
     _remainingCalories = _calorieTarget;
-    
   }
 
  
@@ -80,6 +79,7 @@ class _CaloriesTabState extends State<CaloriesTab>{
       setState(() {
         _totalCalories += _caloriesToAdd;
         _remainingCalories -= _caloriesToAdd;
+        _caloriesToAdd = 0;
       });
       // adds to the db and triggers stream to refire
       _calorieModel.addTodaysCalorie(_totalCalories);

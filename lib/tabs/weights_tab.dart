@@ -5,9 +5,9 @@ import 'package:simple_weight/icons/scale_icon.dart';
 import 'package:simple_weight/styles/styles.dart';
 import 'package:simple_weight/settings/settings_page.dart';
 import 'package:simple_weight/utils/constants.dart';
+import 'package:simple_weight/widgets/editable_weight_list.dart';
 import 'package:simple_weight/widgets/view_average_weight_lost_per_week.dart';
 import 'package:simple_weight/widgets/view_total_weight_loss.dart';
-import 'package:simple_weight/widgets/weight_list.dart';
 
 /// Tab for viewing weight history and inputting weight
 class WeightsTab extends StatefulWidget{
@@ -170,7 +170,7 @@ class _WeightsTabState extends State<WeightsTab> {
           ),
 
           // Displays all weights below in a list
-          WeightList(),
+          EditableWeightList(),
         ]
       ),
     );
